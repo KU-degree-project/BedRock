@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.bed.android.bedrock.vmodel.ProductViewModel" />
+    </data>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+        <ImageView
+            android:id="@+id/img_product"
+            android:layout_width="80dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            loadImage="@{viewModel.img}"
+            />
+        <TextView
+            android:id="@+id/text_product_name"
+            android:gravity="center"
+            android:layout_weight="8"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="product name"
+            android:fontFamily="@font/fontstyle"
+            android:hint="price"
+            android:textAlignment="center"
+            />
+        <TextView
+            android:id="@+id/text_lowest_price"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@{viewModel.lowestPrice}"
+            android:fontFamily="@font/fontstyle"
+            android:hint="price"
+            android:textAlignment="center"
+            />
+        <Button
+            android:id="@+id/detailBtn"
+            android:layout_weight="0.1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="상세보기"
+            android:textColor="#808080"
+            android:textSize="12sp"
+            android:fontFamily="@font/fontstyle"
+            android:background="#00ff0000"
+            />
+    </LinearLayout>
+
+</layout>

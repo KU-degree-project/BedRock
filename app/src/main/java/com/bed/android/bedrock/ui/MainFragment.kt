@@ -1,7 +1,6 @@
-package com.bed.android.bedrock
+package com.bed.android.bedrock.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +33,10 @@ class MainFragment: Fragment() {
 
 
     companion object{
-        fun newInstance()=MainFragment()
+
+        fun newInstance()= MainFragment()
+
+
+
     }
 }
