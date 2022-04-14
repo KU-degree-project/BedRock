@@ -1,3 +1,10 @@
 package com.bed.android.bedrock.model
 
-data class Product(var img:String="",var id:String="",var name:String="",var priceList:List<String>,var lowestPrice:String)
+data class Product(
+    var id:String="",
+    var img:String="",
+    var des:String="",
+    var name:String="",
+    var priceList:List<String>,
+    var product_link:String="",
+    var lowestPrice:String)

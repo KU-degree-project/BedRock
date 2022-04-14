@@ -16,36 +16,67 @@ class Croller(){
     private val url_back="&tab=main"
 
 
-    fun croll(keyword:String):ArrayList<Product>{
+    fun croll_list(keyword:String):ArrayList<Product>{
 
 
         try {
             url=keyword
             val url_basic=url_front+url+url_back
             var doc = Jsoup.connect(url_basic).get()
-            var productList=doc.select(".product_list").select(".prod_item").select(".prod_main_info")
+            var productList=doc.select(".product_list").select(".prod_item")
+
             if(productList.isEmpty()){
                 Log.d(TAG,"null")
                 return ArrayList<Product>()
             }
+
             else{
                 val productlist_tmp = arrayListOf<Product>()
                 for(e in productList){
-                   Log.d(TAG,""+e.toString())
-                    var product: Product = Product("","","", arrayListOf(),"")
+                  // Log.d(TAG,""+e.toString())
+                    var product: Product = Product("","","","", arrayListOf(),"","")
 
-                    val lowestPrice= e
-                        .select(".prod_pricelist")
+
+                    val id=e.attr("id")
+
+                    if(id=="")continue
+
+
+
+                    //Log.d(TAG,id.toString())
+                    val lowestPrice= e.select(".prod_pricelist")
                         .select(".rank_one")
                         .select(".price_sect")
                         .select("a")
                         .select("strong")
 
-                    //val name
-                    val imgSrc=e.select(".thumb_image")
+                    val productName=e.select(".prod_info")
+                        .select(".prod_name a")
+
+                    var imgSrc=e.select(".thumb_image")
                         .select("a")
                         .select("img")
                         .attr("src")
+
+
+                    if(imgSrc.length==0){
+                        imgSrc=e.select(".thumb_image")
+                            .select("a").first()
+                            .select("img")
+                            .attr("data-original")
+
+                        Log.d(TAG,"cc")
+                    }
+
+                    val desc=e.select(".prod_info")
+                        .select(".prod_spec_set")
+                        .select(".spec_list")
+
+                    val productLink=e.select(".prod_info")
+                        .select(".prod_name")
+                        .select("a")
+                        .attr("href")
+
 
                     product.lowestPrice=lowestPrice.text().toString()
                     product.img= if(imgSrc.length>0) {
@@ -53,11 +84,16 @@ class Croller(){
                     else{
                         ""
                     }
+                    product.name=productName.text().toString()
+                    product.id=id.toString()
+                    product.des=desc.text().toString()
+                    product.product_link=productLink.toString()
 
-                    Log.d(TAG,"findqwdqwdqwd"+product.img)
+                    Log.d(TAG,"product-des"+productLink.toString())
+
+
                     productlist_tmp.add(product)
 
-                  //  Log.d(TAG,imgSrc.toString())
 
                 }
                 return productlist_tmp
@@ -68,6 +104,10 @@ class Croller(){
             e.printStackTrace()
             return ArrayList<Product>()
         }
+    }
+
+    fun croll_detail(){
+
     }
 
 

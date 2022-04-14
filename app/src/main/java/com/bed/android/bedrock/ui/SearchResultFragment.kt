@@ -1,8 +1,10 @@
 package com.bed.android.bedrock.ui
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -20,6 +22,7 @@ import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentSearchResultBinding
 import com.bed.android.bedrock.databinding.ListItemProductBinding
 import com.bed.android.bedrock.model.ResultViewModel
+import com.bed.android.bedrock.ui.MainActivity.Companion.croller
 import com.bed.android.bedrock.vmodel.ProductViewModel
 import com.bed.android.bedrock.vmodel.SearchResultViewModel
 import com.bumptech.glide.Glide
@@ -40,11 +43,13 @@ class SearchResultFragment : Fragment(){
     private lateinit var binding_result: FragmentSearchResultBinding
 
     private lateinit var productRecyclerView: RecyclerView
-    private lateinit var croller: Croller
+   // private lateinit var croller: Croller
     private lateinit var searchText:String
     private var adapter: ProductAdapter? = null
 
-
+    interface Callbacks{
+        fun onProductSelected(productLink:String)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,12 +58,10 @@ class SearchResultFragment : Fragment(){
         Log.d(TAG,searchText)
 
 
-        croller= Croller()
         resultViewModel.products= MutableLiveData()
 
         GlobalScope.launch(Dispatchers.IO){
-            resultViewModel.products.postValue(croller.croll(searchText))
-
+            resultViewModel.products.postValue(croller.croll_list(searchText))
             Log.d(TAG,"number"+resultViewModel.products.value?.size.toString())
         }
 
@@ -69,21 +72,22 @@ class SearchResultFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-         binding_result =
-            DataBindingUtil.inflate(inflater,R.layout.fragment_search_result,container,false)
+         binding_result =DataBindingUtil.inflate(inflater,R.layout.fragment_search_result,container,false)
+
         val view=binding_result.root
 
         binding_result.viewModel= SearchResultViewModel()
-        binding_result.viewModel!!.searchKeyword.postValue(searchText)
+        binding_result.viewModel!!.searchKeyword.postValue(": "+searchText)
 
         binding_result.lifecycleOwner=viewLifecycleOwner
 
+        showSampleData(true)
 
         resultViewModel.products.observe(
             viewLifecycleOwner,
-            Observer{
-                    products->
+            Observer{ products->
                 products?.let{
+                    showSampleData(false)
                     updateUI(products.toMutableList())
                     binding_result.viewModel!!.searchCount.postValue("검색결과 "+products.size.toString()+"개")
                 }
@@ -93,18 +97,17 @@ class SearchResultFragment : Fragment(){
         productRecyclerView=
             view.findViewById(R.id.product_recycler_view) as RecyclerView
         productRecyclerView.layoutManager=
-            LinearLayoutManager(context).apply{orientation= LinearLayoutManager.VERTICAL}
+            LinearLayoutManager(context).apply{
+                orientation= LinearLayoutManager.VERTICAL
+            }
+
+
+
 
 
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-
-
-    }
     private fun updateUI(products: List<Product>){
         Log.d(TAG,"updateUI")
         if(adapter==null){
@@ -122,19 +125,39 @@ class SearchResultFragment : Fragment(){
 
     }
 
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
     private inner class ProductHolder(private val binding: ListItemProductBinding):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
+
+        var flag=false
 
         init{
             binding.viewModel= ProductViewModel()
             binding.root.setOnClickListener(this)
+
+
+            binding.detailBtn.setOnClickListener { view ->
+                if (!flag) {
+                    binding.textProductName.setText(binding.viewModel!!.product!!.des)
+                    binding.textProductName.setOnTouchListener{v:View,event:MotionEvent->
+                        v.parent.requestDisallowInterceptTouchEvent(true)
+
+                        false
+
+                    }
+                    binding.textProductName.movementMethod=ScrollingMovementMethod()
+
+                    flag = true
+
+                } else {
+                    binding.textProductName.setText(binding.viewModel!!.product!!.name)
+
+                    binding.textProductName.setOnTouchListener(null)
+                    flag = false
+                }
+            }
+
+
+
         }
 
         fun bind(product:Product){
@@ -148,7 +171,10 @@ class SearchResultFragment : Fragment(){
 
         override fun onClick(p0: View?) {
             //제품 클릭 시 상세페이지 넘어가기
+            Log.d(TAG,"touchtest")
+
         }
+
 
 
     }
@@ -180,6 +206,18 @@ class SearchResultFragment : Fragment(){
     }
 
 
+
+    private fun showSampleData(isLoading:Boolean){
+        if (isLoading) {
+            binding_result.sflSample.startShimmer()
+            binding_result.sflSample.visibility = View.VISIBLE
+            binding_result.productRecyclerView.visibility = View.GONE
+        } else {
+            binding_result.sflSample.stopShimmer()
+            binding_result.sflSample.visibility = View.GONE
+            binding_result.productRecyclerView.visibility = View.VISIBLE
+        }
+    }
 
 
 

@@ -3,8 +3,9 @@ package com.bed.android.bedrock.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bed.android.bedrock.R
+import com.bed.android.bedrock.model.Croller
 
-class  MainActivity : AppCompatActivity(), SearchBarFragment.Callbacks {
+class  MainActivity : AppCompatActivity(), SearchBarFragment.Callbacks,SearchResultFragment.Callbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -15,7 +16,6 @@ class  MainActivity : AppCompatActivity(), SearchBarFragment.Callbacks {
             supportFragmentManager
                 .beginTransaction()
                 .add(R.id.fragment_container, SearchBarFragment.newInstance())
-                .addToBackStack(null)
                 .commit()
         }
 
@@ -35,4 +35,20 @@ class  MainActivity : AppCompatActivity(), SearchBarFragment.Callbacks {
             .addToBackStack(null)
             .commit()
     }
+
+
+    override fun onProductSelected(productLink: String) {
+        val fragment=ProductDetailFragment()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container,fragment)
+            .addToBackStack(null) // backStack에 추가하여 crimelist를 다시 역 transaction함과 동시에 viewmodel도 유지시킬 수 있다.
+            .commit()
+    }
+
+    companion object{
+        val croller= Croller()
+    }
+
+
 }

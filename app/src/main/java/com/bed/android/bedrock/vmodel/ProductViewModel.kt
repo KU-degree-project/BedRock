@@ -7,6 +7,8 @@ class ProductViewModel {
 
     val img: MutableLiveData<String?> = MutableLiveData()
     val lowestPrice: MutableLiveData<String?> = MutableLiveData()
+    val productName:MutableLiveData<String?> = MutableLiveData()
+    val productDescription:MutableLiveData<String?> = MutableLiveData()
 
 
     var product: Product?=null
@@ -14,6 +16,8 @@ class ProductViewModel {
             field=product
             img.postValue(product?.img)
             lowestPrice.postValue(product?.lowestPrice)
+            productName.postValue(product?.name)
+            productDescription.postValue(product?.des)
 
         }
 
