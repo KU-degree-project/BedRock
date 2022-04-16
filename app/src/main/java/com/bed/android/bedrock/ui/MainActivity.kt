@@ -2,7 +2,6 @@ package com.bed.android.bedrock.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.model.Croller
 import com.bed.android.bedrock.model.Product
@@ -17,14 +16,9 @@ class  MainActivity : AppCompatActivity(), SearchBarFragment.Callbacks,SearchRes
         if(isFragmentContainerEmpty){
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.fragment_container, SearchBarFragment.newInstance())
+                .add(R.id.fragment_container, MainFragment.newInstance())
                 .commit()
         }
-
-
-
-
-
 
     }
 
