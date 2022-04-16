@@ -13,11 +13,11 @@
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="50dp">
-        <ImageButton
+        <ImageView
             android:id="@+id/img_product"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            loadImage="@{viewModel.url}"
+            loadImage="@{viewModel.imgUrl}"
             />
 
         <TextView

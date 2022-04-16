@@ -1,5 +1,6 @@
 package com.bed.android.bedrock.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
@@ -27,13 +28,17 @@ private const val TAG="Tab_pricelist"
 
 class Tab_pricelist(val product: Product): Fragment() {
 
+    private var callbacks:Callbacks?=null
+    interface Callbacks{
+        fun onPriceSelected(StoreUrl:String)
+    }
 
     private lateinit var binding_price_list: FragmentDetailtabPricelistBinding
     private lateinit var priceRecyclerView: RecyclerView
     private var adapter: Tab_pricelist.PriceAdapter? = null
 
 
-    private fun updateUI(prices: List<Pair<String,String>>){
+    private fun updateUI(prices: List<Triple<String,String,String>>){
         Log.d(TAG,"updateUI")
 
         if(adapter==null){
@@ -49,6 +54,13 @@ class Tab_pricelist(val product: Product): Fragment() {
             priceRecyclerView.adapter=adapter
         }
 
+    }
+
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks=context as Callbacks
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,23 +106,28 @@ class Tab_pricelist(val product: Product): Fragment() {
     }
 
     private inner class PriceHolder(private val binding:ListItemPriceBinding):
-        RecyclerView.ViewHolder(binding.root){
+        RecyclerView.ViewHolder(binding.root),View.OnClickListener{
 
 
         init{
             binding.viewModel= PriceViewModel()
-
+            binding.root.setOnClickListener(this)
             }
 
 
-        fun bind(storeUrl:String,price:String){
+        fun bind(thumbnailUrl:String,price:String,storeUrl:String){
             binding.apply{
                 viewModel?.price?.postValue(price)
-                viewModel?.url?.postValue(storeUrl)
+                viewModel?.imgUrl?.postValue(thumbnailUrl)
+                viewModel?.storeUrl=storeUrl
 
                 executePendingBindings()
 
             }
+        }
+
+        override fun onClick(v: View?) {
+            callbacks?.onPriceSelected(binding.viewModel!!.storeUrl)
         }
 
 
@@ -119,8 +136,8 @@ class Tab_pricelist(val product: Product): Fragment() {
 
 
 
-    private inner class PriceAdapter(diffCallback: DiffUtil.ItemCallback<Pair<String,String>>)
-        : androidx.recyclerview.widget.ListAdapter<Pair<String,String>,PriceHolder>(diffCallback){
+    private inner class PriceAdapter(diffCallback: DiffUtil.ItemCallback<Triple<String,String,String>>)
+        : androidx.recyclerview.widget.ListAdapter<Triple<String,String,String>,PriceHolder>(diffCallback){
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PriceHolder {
             val binding=DataBindingUtil.inflate<ListItemPriceBinding>(
@@ -138,7 +155,7 @@ class Tab_pricelist(val product: Product): Fragment() {
 
 
         override fun onBindViewHolder(holder: PriceHolder, position: Int) {
-            holder.bind(getItem(position).first,getItem(position).second)
+            holder.bind(getItem(position).first,getItem(position).second,getItem(position).third)
             Log.d(TAG,"onBindViewHolder")
         }
     }
@@ -150,12 +167,12 @@ class Tab_pricelist(val product: Product): Fragment() {
 
     companion object{
 
-        private val diffUtil = object : DiffUtil.ItemCallback<Pair<String,String>>() {
+        private val diffUtil = object : DiffUtil.ItemCallback<Triple<String,String,String>>() {
 
-            override fun areContentsTheSame(oldItem: Pair<String,String>, newItem: Pair<String,String>): Boolean {
+            override fun areContentsTheSame(oldItem: Triple<String,String,String>, newItem: Triple<String,String,String>): Boolean {
                 return oldItem == newItem
             }
-            override fun areItemsTheSame(oldItem: Pair<String,String>, newItem: Pair<String,String>) =
+            override fun areItemsTheSame(oldItem: Triple<String,String,String>, newItem: Triple<String,String,String>) =
                 oldItem.first == newItem.first
         }
     }

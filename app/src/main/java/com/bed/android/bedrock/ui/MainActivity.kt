@@ -5,8 +5,12 @@ import android.os.Bundle
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.model.Croller
 import com.bed.android.bedrock.model.Product
+import com.google.android.material.tabs.TabLayout
 
-class  MainActivity : AppCompatActivity(), SearchBarFragment.Callbacks,SearchResultFragment.Callbacks {
+class  MainActivity : AppCompatActivity(),
+    SearchBarFragment.Callbacks,
+    SearchResultFragment.Callbacks,
+    Tab_pricelist.Callbacks{
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_BedRock)
         super.onCreate(savedInstanceState)
@@ -38,7 +42,16 @@ class  MainActivity : AppCompatActivity(), SearchBarFragment.Callbacks,SearchRes
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container,fragment)
-            .addToBackStack(null) // backStack에 추가하여 crimelist를 다시 역 transaction함과 동시에 viewmodel도 유지시킬 수 있다.
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onPriceSelected(storeUrl: String) {
+        val fragment=StorePageFragment.newInstance(storeUrl)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container,fragment)
+            .addToBackStack(null)
             .commit()
     }
 

@@ -5,6 +5,6 @@ data class Product(
     var img:String="",
     var des:String="",
     var name:String="",
-    var priceList:List<Pair<String,String>>,
+    var priceList:List<Triple<String,String,String>>,
     var product_link:String="",
     var lowestPrice:String)

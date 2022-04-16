@@ -8,7 +8,7 @@ class ProductDetailViewModel {
     val lowestPrice: MutableLiveData<String?> = MutableLiveData()
     val productName: MutableLiveData<String?> = MutableLiveData()
     val productDescription: MutableLiveData<String?> = MutableLiveData()
-    val priceList: MutableLiveData<List<Pair<String,String>>> = MutableLiveData()
+    val priceList: MutableLiveData<List<Triple<String,String,String>>> = MutableLiveData()
     val productLink: MutableLiveData<String?> = MutableLiveData()
 
     var product: Product?=null
