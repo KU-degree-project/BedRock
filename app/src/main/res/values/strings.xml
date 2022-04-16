@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">BedRock</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="detail_info">상세 SPEC</string>
+    <string name="price_list">가격정보</string>
     <string name="app_title">bedrock</string>
     <string name="main_search_hint">검색어를 입력하세요.</string>
     <string name="popular_keyword_text">인기 검색어</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
