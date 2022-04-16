@@ -110,7 +110,7 @@ class Croller() {
             var doc = Jsoup.connect(product.product_link).get()
 
 
-            var productInfo = doc.select(".lowest_list").select(".high_list")
+            var productInfo = doc.select(".lowest_list").select(".high_list tr")
 
             if (productInfo.isEmpty()) {
                 Log.d("detail", "null")
@@ -121,6 +121,7 @@ class Croller() {
                     val name=e.select(".logo_over").select("img").attr("src")
                     val price=e.select(".price").select(".prc_t")
                     product_price_list.add(Pair("https:"+name,price.text()))
+                    Log.d("pricelistCroller",productInfo.size.toString())
                 }
                 product.priceList=product_price_list
             }

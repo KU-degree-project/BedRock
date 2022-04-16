@@ -9,15 +9,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/text_desc"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview_price"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="product_description"
-            android:text="@{viewModel.priceList.toString()}"
+            android:layout_height="match_parent">
 
-
-            />
+        </androidx.recyclerview.widget.RecyclerView>
 
     </FrameLayout>
 </layout>
