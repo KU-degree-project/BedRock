@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+        name="viewModel"
+        type="com.bed.android.bedrock.vmodel.ProductDetailViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/product_image"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            loadImage="@{viewModel.img}"
+
+
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="Product Name"
+            android:text="@{viewModel.productName}"
+            android:fontFamily="@font/fontstyle"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textSize="20sp"/>
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_detail"
+            android:layout_gravity="center"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            app:tabTextColor="@color/black"
+            app:tabIndicator="@color/black">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/product_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detail_info"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/price_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/price_list"/>
+
+
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+
+
+
+            />
+
+
+
+
+
+
+    </LinearLayout>
+</layout>

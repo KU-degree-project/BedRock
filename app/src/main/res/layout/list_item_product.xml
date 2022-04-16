@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.bed.android.bedrock.vmodel.ProductViewModel" />
+    </data>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+        <ImageView
+            android:id="@+id/img_product"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            loadImage="@{viewModel.img}"
+            />
+
+        <TextView
+            android:id="@+id/text_product_name"
+            android:scrollbars="vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:text="@{viewModel.productName}"
+            android:fontFamily="@font/fontstyle"
+            android:hint="product name"
+            android:textAlignment="center"
+            android:layout_marginRight="20dp"
+            />
+
+
+        <TextView
+            android:id="@+id/text_lowest_price"
+            android:gravity="center"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:text="@{viewModel.lowestPrice}"
+            android:fontFamily="@font/fontstyle"
+            android:textSize="12sp"
+            android:hint="1000000"
+            android:textAlignment="center"
+            />
+        <Button
+            android:id="@+id/detailBtn"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:text="상세보기"
+            android:textColor="#808080"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:fontFamily="@font/fontstyle"
+            android:background="#00ff0000"
+            />
+    </LinearLayout>
+
+</layout>
