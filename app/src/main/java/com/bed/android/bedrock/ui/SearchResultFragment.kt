@@ -1,6 +1,8 @@
 package com.bed.android.bedrock.ui
 
+import android.content.Context
 import android.os.Bundle
+import android.telecom.Call
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
@@ -43,12 +45,17 @@ class SearchResultFragment : Fragment(){
     private lateinit var binding_result: FragmentSearchResultBinding
 
     private lateinit var productRecyclerView: RecyclerView
-   // private lateinit var croller: Croller
     private lateinit var searchText:String
     private var adapter: ProductAdapter? = null
 
+    private var callbacks:Callbacks?=null
     interface Callbacks{
-        fun onProductSelected(productLink:String)
+        fun onProductSelected(product:Product)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks=context as Callbacks?
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -152,6 +159,7 @@ class SearchResultFragment : Fragment(){
                     binding.textProductName.setText(binding.viewModel!!.product!!.name)
 
                     binding.textProductName.setOnTouchListener(null)
+                    binding.textProductName.movementMethod=null
                     flag = false
                 }
             }
@@ -171,7 +179,7 @@ class SearchResultFragment : Fragment(){
 
         override fun onClick(p0: View?) {
             //제품 클릭 시 상세페이지 넘어가기
-            Log.d(TAG,"touchtest")
+            callbacks?.onProductSelected(binding.viewModel?.product!!)
 
         }
 

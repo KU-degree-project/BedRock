@@ -2,14 +2,15 @@ package com.bed.android.bedrock.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.model.Croller
+import com.bed.android.bedrock.model.Product
 
 class  MainActivity : AppCompatActivity(), SearchBarFragment.Callbacks,SearchResultFragment.Callbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         val isFragmentContainerEmpty= (savedInstanceState==null)
         if(isFragmentContainerEmpty){
@@ -37,8 +38,8 @@ class  MainActivity : AppCompatActivity(), SearchBarFragment.Callbacks,SearchRes
     }
 
 
-    override fun onProductSelected(productLink: String) {
-        val fragment=ProductDetailFragment()
+    override fun onProductSelected(product: Product) {
+        val fragment=ProductDetailFragment.newInstance(product)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container,fragment)

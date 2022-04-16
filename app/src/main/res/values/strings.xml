@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BedRock</string>
+    <string name="detail_info">상세 SPEC</string>
+    <string name="price_list">가격정보</string>
 </resources>
