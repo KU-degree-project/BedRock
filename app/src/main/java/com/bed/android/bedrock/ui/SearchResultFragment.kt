@@ -71,8 +71,6 @@ class SearchResultFragment : Fragment(){
             resultViewModel.products.postValue(croller.croll_list(searchText))
             Log.d(TAG,"number"+resultViewModel.products.value?.size.toString())
         }
-
-
     }
     override fun onCreateView(
         inflater: LayoutInflater,

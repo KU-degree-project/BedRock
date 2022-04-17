@@ -137,6 +137,32 @@ class Croller() {
 
     }
 
+    fun croll_keywords():List<String>{
+        val keywordList = mutableListOf<String>()
+        try {
+            url = "http://search.danawa.com/dsearch.php?query=KONKUK"
+            val doc = Jsoup.connect(url).get()
+
+            val keywords = doc.select(".keyword_list")
+                .select("ol")
+                .select("li")
+                .select("a")
+
+            for ((idx, k) in keywords.withIndex()) {
+                val new_keyword = (idx + 1).toString() + ". " + k.text()
+                if (idx == 10) {
+                    break
+                }
+                keywordList.add(new_keyword)
+            }
+            Log.d(TAG, keywordList.toString())
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return keywordList.toList()
+    }
+
 
 }
 
