@@ -82,8 +82,7 @@ class SearchBarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            animation = ObjectAnimator.ofFloat(binding.popularKeywordTextview, "alpha", 1f, 0f).apply {
-                repeatMode = ObjectAnimator.REVERSE
+            animation = ObjectAnimator.ofFloat(binding.popularKeywordTextview, "alpha", 0f, 1f, 1f, 1f, 1f, 0f).apply {
                 repeatCount = ObjectAnimator.INFINITE
                 addListener(object: AnimatorListenerAdapter(){
                     override fun onAnimationRepeat(animation: Animator?) {
@@ -97,7 +96,7 @@ class SearchBarFragment : Fragment() {
                         })
                     }
                 })
-            duration = 2000
+            duration = 6000
             start()
             }
         }
