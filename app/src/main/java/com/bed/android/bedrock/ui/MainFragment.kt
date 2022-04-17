@@ -37,7 +37,7 @@ class MainFragment: Fragment() {
                 // 검색창을 위한 Animation
                 ObjectAnimator.ofFloat(searchBarView, "translationY", -((root.height - searchBarView.height) / 2 - TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, 8f, requireContext().resources.displayMetrics))).apply {
-                        duration = 450
+                        duration = 200
                         addListener(object:AnimatorListenerAdapter(){
                             override fun onAnimationEnd(animation: Animator?) {
                                 super.onAnimationEnd(animation)
@@ -52,7 +52,7 @@ class MainFragment: Fragment() {
 
                 // 타이틀 글자 위로 올려보내기
                 ObjectAnimator.ofFloat(titleText, "translationY", -1000f).apply {
-                    duration = 450
+                    duration = 200
                     start()
                 }
             }
