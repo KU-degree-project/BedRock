@@ -102,6 +102,11 @@ class SearchBarFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        animation.cancel()
+    }
+
     companion object {
         fun newInstance() = SearchBarFragment()
     }
