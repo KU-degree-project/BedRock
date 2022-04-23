@@ -31,13 +31,24 @@ class MainFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding!!.apply {
+            ObjectAnimator.ofFloat(searchBarView, "translationY", -1000f, -((root.height - searchBarView.height) / 2 - TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 8f, requireContext().resources.displayMetrics))).apply {
+                duration = 200
+                start()
+            }
+
+            ObjectAnimator.ofFloat(titleText, "translationY", -1000f, 0f).apply {
+                duration = 200
+                start()
+            }
+
             // 검색창 눌러서 프래그먼트 전환 되기전에 애니메이션
             searchBarView.setOnClickListener {
                 searchBarView.text = "" // 안내 텍스트 지우기
                 // 검색창을 위한 Animation
                 ObjectAnimator.ofFloat(searchBarView, "translationY", -((root.height - searchBarView.height) / 2 - TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, 8f, requireContext().resources.displayMetrics))).apply {
-                        duration = 450
+                        duration = 200
                         addListener(object:AnimatorListenerAdapter(){
                             override fun onAnimationEnd(animation: Animator?) {
                                 super.onAnimationEnd(animation)
@@ -48,13 +59,16 @@ class MainFragment: Fragment() {
                                 }
                             }
                         })
-                    start() }
+                    start()
+                    }
 
                 // 타이틀 글자 위로 올려보내기
                 ObjectAnimator.ofFloat(titleText, "translationY", -1000f).apply {
-                    duration = 450
+                    duration = 200
                     start()
                 }
+
+
             }
         }
     }
