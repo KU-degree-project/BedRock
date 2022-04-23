@@ -1,6 +1,7 @@
 package com.bed.android.bedrock.vmodel
 
 import androidx.lifecycle.MutableLiveData
+import com.bed.android.bedrock.loadImage
 import com.bed.android.bedrock.model.Product
 
 class ProductDetailViewModel {

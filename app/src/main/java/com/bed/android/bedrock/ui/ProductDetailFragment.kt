@@ -16,6 +16,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentProductDetailBinding
+import com.bed.android.bedrock.loadImage
 import com.bed.android.bedrock.model.Croller
 import com.bed.android.bedrock.model.Product
 import com.bed.android.bedrock.ui.MainActivity.Companion.croller
@@ -44,6 +45,9 @@ class ProductDetailFragment(var product:Product) : Fragment(){
 
         GlobalScope.launch(Dispatchers.IO){
             croller.croll_detail(product)
+            GlobalScope.launch(Dispatchers.Main){
+                loadImage(binding_detail.productImage,product.img)
+            }
             Log.d(TAG,product.priceList.toString())
         }
     }

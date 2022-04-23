@@ -1,8 +1,8 @@
 package com.bed.android.bedrock.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.telecom.Call
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,23 +11,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bed.android.bedrock.model.Croller
 import com.bed.android.bedrock.model.Product
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentSearchResultBinding
 import com.bed.android.bedrock.databinding.ListItemProductBinding
-import com.bed.android.bedrock.model.ResultViewModel
 import com.bed.android.bedrock.ui.MainActivity.Companion.croller
 import com.bed.android.bedrock.vmodel.ProductViewModel
 import com.bed.android.bedrock.vmodel.SearchResultViewModel
-import com.bumptech.glide.Glide
 
 
 import kotlinx.coroutines.Dispatchers
@@ -39,10 +35,10 @@ private const val TAG="SearchResultFragment"
 
 class SearchResultFragment : Fragment(){
 
-    private val resultViewModel : ResultViewModel by lazy{
-        ViewModelProvider(this).get(ResultViewModel::class.java)
+    private val resultViewModel : SearchResultViewModel by lazy{
+        ViewModelProvider(this).get(SearchResultViewModel::class.java)
     }
-    private lateinit var binding_result: FragmentSearchResultBinding
+    private lateinit var bindingResult: FragmentSearchResultBinding
 
     private lateinit var productRecyclerView: RecyclerView
     private lateinit var searchText:String
@@ -66,7 +62,6 @@ class SearchResultFragment : Fragment(){
 
 
         resultViewModel.products= MutableLiveData()
-
         GlobalScope.launch(Dispatchers.IO){
             resultViewModel.products.postValue(croller.croll_list(searchText))
             Log.d(TAG,"number"+resultViewModel.products.value?.size.toString())
@@ -77,27 +72,25 @@ class SearchResultFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-         binding_result =DataBindingUtil.inflate(inflater,R.layout.fragment_search_result,container,false)
+         bindingResult =DataBindingUtil.inflate(inflater,R.layout.fragment_search_result,container,false)
 
-        val view=binding_result.root
+        val view=bindingResult.root
 
-        binding_result.viewModel= SearchResultViewModel()
-        binding_result.viewModel!!.searchKeyword.postValue(": "+searchText)
-
-        binding_result.lifecycleOwner=viewLifecycleOwner
+        bindingResult.viewModel= SearchResultViewModel()
+        bindingResult.viewModel!!.searchKeyword.postValue(": "+searchText)
+        bindingResult.lifecycleOwner=viewLifecycleOwner
 
         showSampleData(true)
 
-        resultViewModel.products.observe(
-            viewLifecycleOwner,
-            Observer{ products->
-                products?.let{
-                    showSampleData(false)
-                    updateUI(products.toMutableList())
-                    binding_result.viewModel!!.searchCount.postValue("검색결과 "+products.size.toString()+"개")
-                }
+        resultViewModel.products.observe(viewLifecycleOwner) { products ->
+            products?.let {
+                showSampleData(false)
+                updateUI(products.toMutableList())
+                bindingResult.viewModel!!.searchCount.postValue("검색결과 " + products.size.toString() + "개")
             }
-        )
+        }
+
+
 
         productRecyclerView=
             view.findViewById(R.id.product_recycler_view) as RecyclerView
@@ -130,6 +123,7 @@ class SearchResultFragment : Fragment(){
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private inner class ProductHolder(private val binding: ListItemProductBinding):
         RecyclerView.ViewHolder(binding.root), View.OnClickListener{
 
@@ -140,9 +134,9 @@ class SearchResultFragment : Fragment(){
             binding.root.setOnClickListener(this)
 
 
-            binding.detailBtn.setOnClickListener { view ->
+            binding.detailBtn.setOnClickListener {
                 if (!flag) {
-                    binding.textProductName.setText(binding.viewModel!!.product!!.des)
+                    binding.textProductName.text = binding.viewModel!!.product!!.des
                     binding.textProductName.setOnTouchListener{v:View,event:MotionEvent->
                         v.parent.requestDisallowInterceptTouchEvent(true)
 
@@ -154,7 +148,7 @@ class SearchResultFragment : Fragment(){
                     flag = true
 
                 } else {
-                    binding.textProductName.setText(binding.viewModel!!.product!!.name)
+                    binding.textProductName.text = binding.viewModel!!.product!!.name
 
                     binding.textProductName.setOnTouchListener(null)
                     binding.textProductName.movementMethod=null
@@ -215,13 +209,13 @@ class SearchResultFragment : Fragment(){
 
     private fun showSampleData(isLoading:Boolean){
         if (isLoading) {
-            binding_result.sflSample.startShimmer()
-            binding_result.sflSample.visibility = View.VISIBLE
-            binding_result.productRecyclerView.visibility = View.GONE
+            bindingResult.sflSample.startShimmer()
+            bindingResult.sflSample.visibility = View.VISIBLE
+            bindingResult.productRecyclerView.visibility = View.GONE
         } else {
-            binding_result.sflSample.stopShimmer()
-            binding_result.sflSample.visibility = View.GONE
-            binding_result.productRecyclerView.visibility = View.VISIBLE
+            bindingResult.sflSample.stopShimmer()
+            bindingResult.sflSample.visibility = View.GONE
+            bindingResult.productRecyclerView.visibility = View.VISIBLE
         }
     }
 

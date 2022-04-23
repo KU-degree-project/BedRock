@@ -109,6 +109,13 @@ class Croller() {
             Log.d("detail",product.product_link)
             var doc = Jsoup.connect(product.product_link).get()
 
+            var thumbnail=doc.select(".summary_left")
+                .select(".photo_w")
+                .select("a")
+                .select("img")
+                .attr("src")
+
+            Log.d(TAG,thumbnail.toString())
 
             var productInfo = doc.select(".lowest_list").select(".high_list tr")
 
@@ -119,12 +126,15 @@ class Croller() {
                 val product_price_list = arrayListOf<Triple<String, String, String>>()
                 for (e in productInfo) {
                     if(e.className()=="product-pot") continue
+
+
                     val name=e.select(".logo_over").select("img").attr("src")
                     val price=e.select(".price").select(".prc_t")
                     val link=e.select(".logo_over a").attr("href")
                     product_price_list.add(Triple("https:"+name,price.text(),link))
 
                 }
+                product.img="https:"+thumbnail.toString()
                 product.priceList=product_price_list
 
             }

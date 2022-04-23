@@ -1,9 +1,13 @@
 package com.bed.android.bedrock.vmodel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.bed.android.bedrock.model.Product
 
-class SearchResultViewModel {
+class SearchResultViewModel : ViewModel()
+{
 
+    lateinit var products: MutableLiveData<List<Product>>
 
     var searchKeyword:MutableLiveData<String> = MutableLiveData()
         set(value){
