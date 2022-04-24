@@ -2,14 +2,13 @@ package com.bed.android.bedrock.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,16 +16,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentDetailtabPricelistBinding
 import com.bed.android.bedrock.databinding.ListItemPriceBinding
-import com.bed.android.bedrock.databinding.ListItemProductBinding
 import com.bed.android.bedrock.model.Product
 import com.bed.android.bedrock.vmodel.PriceViewModel
-import com.bed.android.bedrock.vmodel.ProductDetailViewModel
 import com.bed.android.bedrock.vmodel.ProductViewModel
-import com.bed.android.bedrock.vmodel.TabPriceViewModel
 private const val TAG="Tab_pricelist"
 
 
-class Tab_pricelist(val product: Product): Fragment() {
+class Tab_pricelist(val viewModel:ProductViewModel): Fragment() {
 
     private var callbacks:Callbacks?=null
     interface Callbacks{
@@ -38,7 +34,7 @@ class Tab_pricelist(val product: Product): Fragment() {
     private var adapter: Tab_pricelist.PriceAdapter? = null
 
 
-    private fun updateUI(prices: List<Triple<String,String,String>>){
+    private fun updateUI(prices: List<Triple<String, String, String>>){
         Log.d(TAG,"updateUI")
 
         if(adapter==null){
@@ -46,6 +42,7 @@ class Tab_pricelist(val product: Product): Fragment() {
             adapter=PriceAdapter(diffUtil)
             adapter?.submitList(prices)
             priceRecyclerView.adapter=adapter
+            Log.d(TAG,prices.toString())
 
         }
         else{
@@ -77,8 +74,8 @@ class Tab_pricelist(val product: Product): Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_detailtab_pricelist,container,false)
         val view=binding_price_list.root
 
-        binding_price_list.viewModel= TabPriceViewModel()
-        binding_price_list.viewModel!!.product=product
+
+        binding_price_list.viewModel= viewModel
         binding_price_list.lifecycleOwner=viewLifecycleOwner
 
 
@@ -89,20 +86,27 @@ class Tab_pricelist(val product: Product): Fragment() {
                 orientation= LinearLayoutManager.VERTICAL
             }
 
-        binding_price_list.viewModel?.priceList?.observe(
-            viewLifecycleOwner,
-            Observer{ prices->
-                prices?.let{
-                    updateUI(prices.toMutableList())
-                }
-            }
-        )
+
+
 
 
 
 
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding_price_list.viewModel?.priceList?.observe(
+            viewLifecycleOwner,
+            Observer{ prices->
+                Log.d(TAG, "onCreateView: $prices")
+                prices?.let{
+                    updateUI(prices.toMutableList())
+                }
+            }
+        )
     }
 
     private inner class PriceHolder(private val binding:ListItemPriceBinding):

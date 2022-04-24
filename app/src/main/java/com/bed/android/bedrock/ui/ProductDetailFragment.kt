@@ -1,26 +1,17 @@
 package com.bed.android.bedrock.ui
 
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentProductDetailBinding
-import com.bed.android.bedrock.loadImage
-import com.bed.android.bedrock.model.Croller
-import com.bed.android.bedrock.model.Product
 import com.bed.android.bedrock.ui.MainActivity.Companion.croller
-import com.bed.android.bedrock.vmodel.ProductDetailViewModel
+import com.bed.android.bedrock.vmodel.ProductViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +23,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG="ProductDetailFragment"
 
-class ProductDetailFragment(var product:Product) : Fragment(){
+class ProductDetailFragment(var viewModel: ProductViewModel) : Fragment(){
 
     private lateinit var binding_detail:FragmentProductDetailBinding
 
@@ -44,11 +35,11 @@ class ProductDetailFragment(var product:Product) : Fragment(){
 
 
         GlobalScope.launch(Dispatchers.IO){
-            croller.croll_detail(product)
+            croller.croll_detail(viewModel.product!!)
             GlobalScope.launch(Dispatchers.Main){
-                loadImage(binding_detail.productImage,product.img)
+               // loadImage(binding_detail.productImage,product.img)
             }
-            Log.d(TAG,product.priceList.toString())
+          //  Log.d(TAG,product.priceList.toString())
         }
     }
 
@@ -60,9 +51,8 @@ class ProductDetailFragment(var product:Product) : Fragment(){
         binding_detail =
             DataBindingUtil.inflate(inflater, R.layout.fragment_product_detail,container,false)
         val view=binding_detail.root
-        Log.d(TAG,product.toString())
-        binding_detail.viewModel= ProductDetailViewModel()
-        binding_detail.viewModel!!.product=product
+    //    Log.d(TAG,product.toString())
+        binding_detail.viewModel= viewModel
 
         binding_detail.lifecycleOwner=viewLifecycleOwner
 
@@ -70,8 +60,8 @@ class ProductDetailFragment(var product:Product) : Fragment(){
 
         val viewpager=binding_detail.viewpager
         val pagerAdapter=PagerAdapter(requireActivity())
-        pagerAdapter.addFragment(Tab_description(binding_detail.viewModel!!.product!!))
-        pagerAdapter.addFragment(Tab_pricelist(binding_detail.viewModel!!.product!!))
+        pagerAdapter.addFragment(Tab_description(binding_detail.viewModel!!))
+        pagerAdapter.addFragment(Tab_pricelist(binding_detail.viewModel!!))
 
 
 
@@ -125,8 +115,8 @@ class ProductDetailFragment(var product:Product) : Fragment(){
     }
 
     companion object {
-        fun newInstance(product: Product): ProductDetailFragment {
-            return ProductDetailFragment(product)
+        fun newInstance(viewModel: ProductViewModel): ProductDetailFragment {
+            return ProductDetailFragment(viewModel)
         }
     }
 }

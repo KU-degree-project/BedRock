@@ -4,7 +4,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.bed.android.bedrock.vmodel.TabPriceViewModel" />
+            type="com.bed.android.bedrock.vmodel.ProductViewModel" />
     </data>
     <FrameLayout
         android:layout_width="match_parent"

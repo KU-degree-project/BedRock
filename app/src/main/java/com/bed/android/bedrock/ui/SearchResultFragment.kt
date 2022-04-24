@@ -38,6 +38,7 @@ class SearchResultFragment : Fragment(){
     private val resultViewModel : SearchResultViewModel by lazy{
         ViewModelProvider(this).get(SearchResultViewModel::class.java)
     }
+
     private lateinit var bindingResult: FragmentSearchResultBinding
 
     private lateinit var productRecyclerView: RecyclerView
@@ -46,7 +47,7 @@ class SearchResultFragment : Fragment(){
 
     private var callbacks:Callbacks?=null
     interface Callbacks{
-        fun onProductSelected(product:Product)
+        fun onProductSelected(viewModel: ProductViewModel)
     }
 
     override fun onAttach(context: Context) {
@@ -171,7 +172,7 @@ class SearchResultFragment : Fragment(){
 
         override fun onClick(p0: View?) {
             //제품 클릭 시 상세페이지 넘어가기
-            callbacks?.onProductSelected(binding.viewModel?.product!!)
+            callbacks?.onProductSelected(binding.viewModel!!)
 
         }
 
@@ -206,7 +207,7 @@ class SearchResultFragment : Fragment(){
     }
 
 
-
+    //facebook shimmer library - 검색중 animation
     private fun showSampleData(isLoading:Boolean){
         if (isLoading) {
             bindingResult.sflSample.startShimmer()

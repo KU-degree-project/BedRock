@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.model.Croller
 import com.bed.android.bedrock.model.Product
+import com.bed.android.bedrock.vmodel.ProductViewModel
 import com.google.android.material.tabs.TabLayout
 
 class  MainActivity : AppCompatActivity(),
@@ -20,7 +21,7 @@ class  MainActivity : AppCompatActivity(),
         if(isFragmentContainerEmpty){
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.fragment_container, RecognizeFragment.newInstance())
+                .add(R.id.fragment_container, MainFragment.newInstance())
                 .commit()
         }
 
@@ -37,8 +38,8 @@ class  MainActivity : AppCompatActivity(),
     }
 
 
-    override fun onProductSelected(product: Product) {
-        val fragment=ProductDetailFragment.newInstance(product)
+    override fun onProductSelected(viewModel :ProductViewModel) {
+        val fragment=ProductDetailFragment.newInstance(viewModel)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container,fragment)

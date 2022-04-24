@@ -6,15 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bed.android.bedrock.R
-import com.bed.android.bedrock.databinding.FragmentDetailtabPricelistBinding
 import com.bed.android.bedrock.databinding.FragmentWebviewBinding
-import com.bed.android.bedrock.vmodel.TabDescViewModel
 
 private const val url="Store_page_url"
 
