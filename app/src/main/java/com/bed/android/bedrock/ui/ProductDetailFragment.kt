@@ -1,6 +1,7 @@
 package com.bed.android.bedrock.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,8 @@ private const val TAG="ProductDetailFragment"
 
 class ProductDetailFragment(var viewModel: ProductViewModel) : Fragment(){
 
+    // Kotlin 네이밍 컨벤션
+    // https://readystory.tistory.com/98 참고
     private lateinit var binding_detail:FragmentProductDetailBinding
 
 
@@ -36,8 +39,9 @@ class ProductDetailFragment(var viewModel: ProductViewModel) : Fragment(){
 
         GlobalScope.launch(Dispatchers.IO){
             croller.croll_detail(viewModel.product!!)
+            Log.d(TAG, "onCreate: ${viewModel.product}")
             GlobalScope.launch(Dispatchers.Main){
-               // loadImage(binding_detail.productImage,product.img)
+//                loadImage(binding_detail.productImage,product.img)
             }
           //  Log.d(TAG,product.priceList.toString())
         }
@@ -115,6 +119,7 @@ class ProductDetailFragment(var viewModel: ProductViewModel) : Fragment(){
     }
 
     companion object {
+
         fun newInstance(viewModel: ProductViewModel): ProductDetailFragment {
             return ProductDetailFragment(viewModel)
         }

@@ -8,21 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentDetailtabPricelistBinding
 import com.bed.android.bedrock.databinding.ListItemPriceBinding
-import com.bed.android.bedrock.model.Product
 import com.bed.android.bedrock.vmodel.PriceViewModel
 import com.bed.android.bedrock.vmodel.ProductViewModel
+
 private const val TAG="Tab_pricelist"
 
 
-class Tab_pricelist(val viewModel:ProductViewModel): Fragment() {
+class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
 
     private var callbacks:Callbacks?=null
     interface Callbacks{
@@ -98,15 +96,11 @@ class Tab_pricelist(val viewModel:ProductViewModel): Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding_price_list.viewModel?.priceList?.observe(
-            viewLifecycleOwner,
-            Observer{ prices->
-                Log.d(TAG, "onCreateView: $prices")
-                prices?.let{
-                    updateUI(prices.toMutableList())
-                }
-            }
-        )
+
+        viewModel.product?.let {
+            updateUI(it.priceList)
+        }
+
     }
 
     private inner class PriceHolder(private val binding:ListItemPriceBinding):

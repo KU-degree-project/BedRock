@@ -4,7 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import com.bed.android.bedrock.model.Product
 
 class PriceViewModel {
-
+    // private val _img = MutableLiveData<String>()
+    // val img: LiveData<String>
+    //  get() = _img
 
     var imgUrl:MutableLiveData<String> = MutableLiveData()
         set(value){
