@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentProductDetailBinding
@@ -18,33 +19,16 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
-
+import org.jetbrains.annotations.NotNull
 
 
 private const val TAG="ProductDetailFragment"
 
-class ProductDetailFragment(var viewModel: ProductViewModel) : Fragment(){
-
-    // Kotlin 네이밍 컨벤션
-    // https://readystory.tistory.com/98 참고
-    private lateinit var binding_detail:FragmentProductDetailBinding
-
-
+class ProductDetailFragment()
+    : BaseFragment<FragmentProductDetailBinding>(R.layout.fragment_product_detail){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
-        GlobalScope.launch(Dispatchers.IO){
-            croller.croll_detail(viewModel.product!!)
-            Log.d(TAG, "onCreate: ${viewModel.product}")
-            GlobalScope.launch(Dispatchers.Main){
-//                loadImage(binding_detail.productImage,product.img)
-            }
-          //  Log.d(TAG,product.priceList.toString())
-        }
     }
 
     override fun onCreateView(
@@ -52,27 +36,29 @@ class ProductDetailFragment(var viewModel: ProductViewModel) : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding_detail =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_product_detail,container,false)
-        val view=binding_detail.root
-    //    Log.d(TAG,product.toString())
-        binding_detail.viewModel= viewModel
 
-        binding_detail.lifecycleOwner=viewLifecycleOwner
+        var view=super.onCreateView(inflater, container, savedInstanceState)
 
+        binding.viewModel=ViewModelProvider(this).get(ProductViewModel::class.java)
+        binding.viewModel?.product=arguments?.getParcelable("product")
 
+        GlobalScope.launch(Dispatchers.IO){
+            croller.croll_detail(binding.viewModel?.product!!)
+            Log.d(TAG, "onCreate: ${binding.viewModel?.product}")
+            GlobalScope.launch(Dispatchers.Main){
+//                loadImage(binding_detail.productImage,product.img)
+            }
+            //  Log.d(TAG,product.priceList.toString())
+        }
 
-        val viewpager=binding_detail.viewpager
         val pagerAdapter=PagerAdapter(requireActivity())
-        pagerAdapter.addFragment(Tab_description(binding_detail.viewModel!!))
-        pagerAdapter.addFragment(Tab_pricelist(binding_detail.viewModel!!))
+        pagerAdapter.addFragment(Tab_description(binding.viewModel!!))
+        pagerAdapter.addFragment(Tab_pricelist(binding.viewModel!!))
 
 
 
-        viewpager?.adapter=pagerAdapter
-        TabLayoutMediator(binding_detail.tabDetail,viewpager,true,true,pagerAdapter).attach()
-
-
+        binding.viewpager.adapter=pagerAdapter
+        TabLayoutMediator(binding.tabDetail,binding.viewpager,true,true,pagerAdapter).attach()
 
 
         return view
@@ -120,8 +106,8 @@ class ProductDetailFragment(var viewModel: ProductViewModel) : Fragment(){
 
     companion object {
 
-        fun newInstance(viewModel: ProductViewModel): ProductDetailFragment {
-            return ProductDetailFragment(viewModel)
+        fun newInstance(): ProductDetailFragment {
+            return ProductDetailFragment()
         }
     }
 }

@@ -39,7 +39,10 @@ class  MainActivity : AppCompatActivity(),
 
 
     override fun onProductSelected(viewModel :ProductViewModel) {
-        val fragment=ProductDetailFragment.newInstance(viewModel)
+        val fragment=ProductDetailFragment.newInstance()
+        var bundle=Bundle()
+        bundle.putParcelable("product",viewModel.product)
+        fragment.arguments=bundle
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container,fragment)

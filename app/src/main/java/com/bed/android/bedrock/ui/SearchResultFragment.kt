@@ -33,18 +33,10 @@ import kotlinx.coroutines.launch
 private const val TAG="SearchResultFragment"
 
 
-class SearchResultFragment : Fragment(){
+class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(R.layout.fragment_search_result){
 
-    private val resultViewModel : SearchResultViewModel by lazy{
-        ViewModelProvider(this).get(SearchResultViewModel::class.java)
-    }
-
-    private lateinit var bindingResult: FragmentSearchResultBinding
-
-    private lateinit var productRecyclerView: RecyclerView
     private lateinit var searchText:String
     private var adapter: ProductAdapter? = null
-
     private var callbacks:Callbacks?=null
     interface Callbacks{
         fun onProductSelected(viewModel: ProductViewModel)
@@ -58,50 +50,36 @@ class SearchResultFragment : Fragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         searchText=arguments?.getSerializable("SearchingText") as String
-
         Log.d(TAG,searchText)
 
-
-        resultViewModel.products= MutableLiveData()
-        GlobalScope.launch(Dispatchers.IO){
-            resultViewModel.products.postValue(croller.croll_list(searchText))
-            Log.d(TAG,"number"+resultViewModel.products.value?.size.toString())
-        }
     }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-         bindingResult =DataBindingUtil.inflate(inflater,R.layout.fragment_search_result,container,false)
+        var view=super.onCreateView(inflater, container, savedInstanceState)
 
-        val view=bindingResult.root
-
-        bindingResult.viewModel= SearchResultViewModel()
-        bindingResult.viewModel!!.searchKeyword.postValue(": "+searchText)
-        bindingResult.lifecycleOwner=viewLifecycleOwner
-
-        showSampleData(true)
-
-        resultViewModel.products.observe(viewLifecycleOwner) { products ->
-            products?.let {
-                showSampleData(false)
-                updateUI(products.toMutableList())
-                bindingResult.viewModel!!.searchCount.postValue("검색결과 " + products.size.toString() + "개")
-            }
-        }
-
-
-
-        productRecyclerView=
-            view.findViewById(R.id.product_recycler_view) as RecyclerView
-        productRecyclerView.layoutManager=
+        binding.viewModel = SearchResultViewModel()
+        binding.viewModel?.searchKeyword?.postValue(": "+searchText)
+        binding.productRecyclerView.layoutManager=
             LinearLayoutManager(context).apply{
                 orientation= LinearLayoutManager.VERTICAL
             }
 
+        binding.viewModel?.products= MutableLiveData()
+        GlobalScope.launch(Dispatchers.IO){
+            binding.viewModel?.products?.postValue(croller.croll_list(searchText))
+        }
 
-
+        binding.viewModel?.products?.observe(viewLifecycleOwner) { products ->
+            products?.let {
+                showSampleData(false)
+                updateUI(products.toMutableList())
+                binding.viewModel?.searchCount?.postValue("검색결과 " + products.size.toString() + "개")
+            }
+        }
+        showSampleData(true)
 
 
         return view
@@ -113,13 +91,13 @@ class SearchResultFragment : Fragment(){
             Log.d(TAG,"updateUI_null")
             adapter=ProductAdapter(diffUtil)
             adapter?.submitList(products)
-            productRecyclerView.adapter=adapter
+            binding.productRecyclerView.adapter=adapter
 
         }
         else{
             Log.d(TAG,"updateUI_submit")
             adapter?.submitList(products)
-            productRecyclerView.adapter=adapter
+            binding.productRecyclerView.adapter=adapter
         }
 
     }
@@ -138,11 +116,9 @@ class SearchResultFragment : Fragment(){
             binding.detailBtn.setOnClickListener {
                 if (!flag) {
                     binding.textProductName.text = binding.viewModel!!.product!!.des
-                    binding.textProductName.setOnTouchListener{v:View,event:MotionEvent->
+                    binding.textProductName.setOnTouchListener{ v:View, _:MotionEvent->
                         v.parent.requestDisallowInterceptTouchEvent(true)
-
                         false
-
                     }
                     binding.textProductName.movementMethod=ScrollingMovementMethod()
 
@@ -176,8 +152,6 @@ class SearchResultFragment : Fragment(){
 
         }
 
-
-
     }
 
 
@@ -192,12 +166,10 @@ class SearchResultFragment : Fragment(){
                 parent,
                 false
             )
-
             binding.lifecycleOwner=viewLifecycleOwner
 
             return ProductHolder(binding)
         }
-
 
 
         override fun onBindViewHolder(holder: ProductHolder, position: Int) {
@@ -210,13 +182,13 @@ class SearchResultFragment : Fragment(){
     //facebook shimmer library - 검색중 animation
     private fun showSampleData(isLoading:Boolean){
         if (isLoading) {
-            bindingResult.sflSample.startShimmer()
-            bindingResult.sflSample.visibility = View.VISIBLE
-            bindingResult.productRecyclerView.visibility = View.GONE
+            binding.sflSample.startShimmer()
+            binding.sflSample.visibility = View.VISIBLE
+            binding.productRecyclerView.visibility = View.GONE
         } else {
-            bindingResult.sflSample.stopShimmer()
-            bindingResult.sflSample.visibility = View.GONE
-            bindingResult.productRecyclerView.visibility = View.VISIBLE
+            binding.sflSample.stopShimmer()
+            binding.sflSample.visibility = View.GONE
+            binding.productRecyclerView.visibility = View.VISIBLE
         }
     }
 

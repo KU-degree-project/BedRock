@@ -104,6 +104,7 @@ class Croller() {
 
     fun croll_detail(product: Product): Product {
 
+        var shopList= arrayListOf<String>("쿠팡","11번가","옥션","G마켓","인터파크")
 
         try {
             Log.d("detail",product.product_link)
@@ -127,6 +128,8 @@ class Croller() {
                 for (e in productInfo) {
                     if(e.className()=="product-pot") continue
 
+                    if(!shopList.contains(e.select(".logo_over").select("img").attr("alt").toString()))
+                        continue
 
                     val name=e.select(".logo_over").select("img").attr("src")
                     val price=e.select(".price").select(".prc_t")

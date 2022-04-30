@@ -15,8 +15,10 @@ abstract class BaseFragment<T : ViewDataBinding>(@LayoutRes private val layoutId
     protected val binding
         get() = checkNotNull(_binding)
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
+        _binding?.lifecycleOwner=viewLifecycleOwner
         return _binding?.also { it.lifecycleOwner = viewLifecycleOwner }?.root
     }
 
