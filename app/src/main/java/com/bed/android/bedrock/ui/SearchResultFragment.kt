@@ -60,17 +60,14 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(R.layout.
     ): View? {
         var view=super.onCreateView(inflater, container, savedInstanceState)
 
-        binding.viewModel = SearchResultViewModel()
-        binding.viewModel?.searchKeyword?.postValue(": "+searchText)
+        binding.viewModel = ViewModelProvider(this).get(SearchResultViewModel::class.java)
+        binding.viewModel?.searchKeyword?.value=": "+searchText
+        binding.viewModel?.initProducts()
         binding.productRecyclerView.layoutManager=
             LinearLayoutManager(context).apply{
                 orientation= LinearLayoutManager.VERTICAL
             }
 
-        binding.viewModel?.products= MutableLiveData()
-        GlobalScope.launch(Dispatchers.IO){
-            binding.viewModel?.products?.postValue(croller.croll_list(searchText))
-        }
 
         binding.viewModel?.products?.observe(viewLifecycleOwner) { products ->
             products?.let {
@@ -112,7 +109,7 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(R.layout.
             binding.viewModel= ProductViewModel()
             binding.root.setOnClickListener(this)
 
-
+            //상세보기 click시 상품명 부분의 칸을 상세 spec으로 바꾸고, scroll할 수 있게 해줌
             binding.detailBtn.setOnClickListener {
                 if (!flag) {
                     binding.textProductName.text = binding.viewModel!!.product!!.des

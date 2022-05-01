@@ -3,6 +3,7 @@ package com.bed.android.bedrock.vmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bed.android.bedrock.model.Product
+import com.bed.android.bedrock.model.Store
 
 class ProductViewModel: ViewModel() {
 
@@ -11,7 +12,7 @@ class ProductViewModel: ViewModel() {
     val productName:MutableLiveData<String?> = MutableLiveData()
     val productDescription:MutableLiveData<String?> = MutableLiveData()
     val productLink:MutableLiveData<String?> = MutableLiveData()
-    val priceList: MutableLiveData<List<Triple<String,String, String>>> = MutableLiveData()
+    val priceList: MutableLiveData<List<Store>> = MutableLiveData()
 
     var product: Product?=null
         set(product){

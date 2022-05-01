@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentDetailtabPricelistBinding
 import com.bed.android.bedrock.databinding.ListItemPriceBinding
+import com.bed.android.bedrock.model.Store
 import com.bed.android.bedrock.vmodel.PriceViewModel
 import com.bed.android.bedrock.vmodel.ProductViewModel
 
@@ -32,7 +33,7 @@ class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
     private var adapter: Tab_pricelist.PriceAdapter? = null
 
 
-    private fun updateUI(prices: List<Triple<String, String, String>>){
+    private fun updateUI(prices: List<Store>){
         Log.d(TAG,"updateUI")
 
         if(adapter==null){
@@ -134,8 +135,8 @@ class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
 
 
 
-    private inner class PriceAdapter(diffCallback: DiffUtil.ItemCallback<Triple<String,String,String>>)
-        : androidx.recyclerview.widget.ListAdapter<Triple<String,String,String>,PriceHolder>(diffCallback){
+    private inner class PriceAdapter(diffCallback: DiffUtil.ItemCallback<Store>)
+        : androidx.recyclerview.widget.ListAdapter<Store,PriceHolder>(diffCallback){
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PriceHolder {
             val binding=DataBindingUtil.inflate<ListItemPriceBinding>(
@@ -153,7 +154,7 @@ class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
 
 
         override fun onBindViewHolder(holder: PriceHolder, position: Int) {
-            holder.bind(getItem(position).first,getItem(position).second,getItem(position).third)
+            holder.bind(getItem(position).thumbnail,getItem(position).price,getItem(position).storeLink)
             Log.d(TAG,"onBindViewHolder")
         }
     }
@@ -165,13 +166,13 @@ class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
 
     companion object{
 
-        private val diffUtil = object : DiffUtil.ItemCallback<Triple<String,String,String>>() {
+        private val diffUtil = object : DiffUtil.ItemCallback<Store>() {
 
-            override fun areContentsTheSame(oldItem: Triple<String,String,String>, newItem: Triple<String,String,String>): Boolean {
+            override fun areContentsTheSame(oldItem: Store, newItem: Store): Boolean {
                 return oldItem == newItem
             }
-            override fun areItemsTheSame(oldItem: Triple<String,String,String>, newItem: Triple<String,String,String>) =
-                oldItem.first == newItem.first
+            override fun areItemsTheSame(oldItem: Store, newItem: Store) =
+                oldItem.thumbnail == newItem.thumbnail
         }
     }
 }

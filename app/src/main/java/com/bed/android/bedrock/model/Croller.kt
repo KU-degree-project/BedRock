@@ -105,7 +105,7 @@ class Croller() {
     fun croll_detail(product: Product): Product {
 
         var shopList= arrayListOf<String>("쿠팡","11번가","옥션","G마켓","인터파크")
-
+        var shopLinkList= arrayListOf<String>("http://www.coupang.com/vp/products")
         try {
             Log.d("detail",product.product_link)
             var doc = Jsoup.connect(product.product_link).get()
@@ -124,17 +124,37 @@ class Croller() {
                 Log.d("detail", "null")
                 return product
             } else {
-                val product_price_list = arrayListOf<Triple<String, String, String>>()
+                val product_price_list = arrayListOf<Store>()
                 for (e in productInfo) {
                     if(e.className()=="product-pot") continue
+                    var shopName=e.select(".logo_over").select("img").attr("alt").toString()
+                    val imgSrc=e.select(".logo_over").select("img").attr("src")
+                    val price=e.select(".price").select(".prc_t")
+                    var link=e.select(".logo_over a").attr("href")
 
-                    if(!shopList.contains(e.select(".logo_over").select("img").attr("alt").toString()))
+                    if(!shopList.contains(shopName))
                         continue
 
-                    val name=e.select(".logo_over").select("img").attr("src")
-                    val price=e.select(".price").select(".prc_t")
-                    val link=e.select(".logo_over a").attr("href")
-                    product_price_list.add(Triple("https:"+name,price.text(),link))
+                    var productNumberStartIndex=link.toString().indexOf("link_pcode")+"link_pcode".length+1
+                    var productNumber=if(shopName=="쿠팡"){link.substring(productNumberStartIndex,productNumberStartIndex+12)}
+                    else{link.substring(productNumberStartIndex,productNumberStartIndex+10)}
+
+
+                    when(shopName){
+                        "G마켓"->
+                            link="http://item.gmarket.co.kr/DetailView/Item.asp?goodscode="+productNumber
+                        "11번가"->
+                            link="https://www.11st.co.kr/products/"+productNumber
+                        "옥션"->
+                            link="http://itempage3.auction.co.kr/DetailView.aspx?ItemNo="+productNumber
+                        "인터파크"->
+                            link="https://shopping.interpark.com/product/productInfo.do?prdNo="+productNumber
+                        else->
+                            link="www.google.com"
+                    }
+                    Log.d("ProductNum",productNumber)
+
+                    product_price_list.add(Store("https:"+imgSrc,price.text(),link))
 
                 }
                 product.img="https:"+thumbnail.toString()

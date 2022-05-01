@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentProductDetailBinding
+import com.bed.android.bedrock.loadImage
 import com.bed.android.bedrock.ui.MainActivity.Companion.croller
 import com.bed.android.bedrock.vmodel.ProductViewModel
 import com.google.android.material.tabs.TabLayout
@@ -27,41 +28,33 @@ private const val TAG="ProductDetailFragment"
 class ProductDetailFragment()
     : BaseFragment<FragmentProductDetailBinding>(R.layout.fragment_product_detail){
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        var view=super.onCreateView(inflater, container, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.viewModel=ViewModelProvider(this).get(ProductViewModel::class.java)
         binding.viewModel?.product=arguments?.getParcelable("product")
-
+        Log.d(TAG,binding.viewModel.toString())
         GlobalScope.launch(Dispatchers.IO){
             croller.croll_detail(binding.viewModel?.product!!)
-            Log.d(TAG, "onCreate: ${binding.viewModel?.product}")
+            //    Log.d(TAG, "onCreate: ${binding.viewModel?.product}")
             GlobalScope.launch(Dispatchers.Main){
-//                loadImage(binding_detail.productImage,product.img)
+                loadImage(binding.productImage,binding.viewModel?.product?.img)
             }
-            //  Log.d(TAG,product.priceList.toString())
         }
 
         val pagerAdapter=PagerAdapter(requireActivity())
         pagerAdapter.addFragment(Tab_description(binding.viewModel!!))
         pagerAdapter.addFragment(Tab_pricelist(binding.viewModel!!))
-
-
-
         binding.viewpager.adapter=pagerAdapter
         TabLayoutMediator(binding.tabDetail,binding.viewpager,true,true,pagerAdapter).attach()
 
 
-        return view
+
     }
     private inner class PagerAdapter(private val fa:FragmentActivity)
         : FragmentStateAdapter(fa),TabLayoutMediator.TabConfigurationStrategy {
