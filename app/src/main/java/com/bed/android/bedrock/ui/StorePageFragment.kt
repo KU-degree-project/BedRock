@@ -36,6 +36,13 @@ class StorePageFragment : Fragment(){
     ): View? {
         binding_webview =
             DataBindingUtil.inflate(inflater, R.layout.fragment_webview,container,false)
+
+        return binding_webview.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val web_view=binding_webview.webView
         web_view.settings.apply{
             javaScriptEnabled=true
@@ -71,11 +78,6 @@ class StorePageFragment : Fragment(){
             }
         }
         web_view.loadUrl(storeUrl.toString())
-
-
-
-
-        return binding_webview.root
     }
 
     companion object{
