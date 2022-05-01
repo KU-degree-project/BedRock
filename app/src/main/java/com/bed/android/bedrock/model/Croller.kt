@@ -30,7 +30,6 @@ class Croller() {
             } else {
                 val productlist_tmp = arrayListOf<Product>()
                 for (e in productList) {
-                    // Log.d(TAG,""+e.toString())
                     var product: Product = Product("", "", "", "", arrayListOf(), "", "")
 
 
@@ -39,7 +38,6 @@ class Croller() {
                     if (id == "") continue
 
 
-                    //Log.d(TAG,id.toString())
                     val lowestPrice = e.select(".prod_pricelist")
                         .select(".rank_one")
                         .select(".price_sect")
@@ -60,8 +58,6 @@ class Croller() {
                             .select("a").first()
                             .select("img")
                             .attr("data-original")
-
-                        Log.d(TAG, "cc")
                     }
 
                     val desc = e.select(".prod_info")
@@ -107,7 +103,6 @@ class Croller() {
         var shopList= arrayListOf<String>("쿠팡","11번가","옥션","G마켓","인터파크")
         var shopLinkList= arrayListOf<String>("http://www.coupang.com/vp/products")
         try {
-            Log.d("detail",product.product_link)
             var doc = Jsoup.connect(product.product_link).get()
 
             var thumbnail=doc.select(".summary_left")
@@ -115,8 +110,6 @@ class Croller() {
                 .select("a")
                 .select("img")
                 .attr("src")
-
-            Log.d(TAG,thumbnail.toString())
 
             var productInfo = doc.select(".lowest_list").select(".high_list tr")
 

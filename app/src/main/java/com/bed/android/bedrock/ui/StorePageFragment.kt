@@ -1,12 +1,15 @@
 package com.bed.android.bedrock.ui
 
+import android.graphics.Bitmap
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebViewClient
+import android.webkit.*
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bed.android.bedrock.R
@@ -34,18 +37,42 @@ class StorePageFragment : Fragment(){
         binding_webview =
             DataBindingUtil.inflate(inflater, R.layout.fragment_webview,container,false)
         val web_view=binding_webview.webView
-
         web_view.settings.apply{
             javaScriptEnabled=true
             useWideViewPort=true
             loadWithOverviewMode=true
             builtInZoomControls=true
             supportZoom()
-
         }
-        web_view.webViewClient= WebViewClient()
-        web_view.webChromeClient= WebChromeClient()
+        web_view.webViewClient= object:WebViewClient(){
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                super.onReceivedError(view, request, error)
+                Toast.makeText(requireContext(),"error",Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
+                binding_webview.progressHorizontal.visibility=View.VISIBLE
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                binding_webview.progressHorizontal.visibility=View.INVISIBLE
+            }
+        }
+        web_view.webChromeClient= object:WebChromeClient(){
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                binding_webview.progressHorizontal.progress=newProgress
+            }
+        }
         web_view.loadUrl(storeUrl.toString())
+
+
 
 
         return binding_webview.root
