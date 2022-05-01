@@ -87,6 +87,11 @@ class SearchBarFragment : Fragment() {
                 addNewKeyword()
                 callbacks?.onSearchBtnClicked(searchBarEditText.text.toString())
             }
+
+            popularKeywordTextView.setOnClickListener {
+                val texts = popularKeywordTextView.text.split(".")[1]
+                callbacks?.onSearchBtnClicked(texts.trim())
+            }
         }
 
         binding.viewModel = popularKeywordViewModel
@@ -95,7 +100,7 @@ class SearchBarFragment : Fragment() {
             viewLifecycleOwner,
             Observer {
                 it?.let {
-                    binding.popularKeywordTextview.text = it
+                    binding.popularKeywordTextView.text = it
                 }
             }
         )
@@ -169,7 +174,7 @@ class SearchBarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            animation = ObjectAnimator.ofFloat(binding.popularKeywordTextview, "alpha", 0f, 1f, 1f, 1f, 1f, 0f).apply {
+            animation = ObjectAnimator.ofFloat(binding.popularKeywordTextView, "alpha", 0f, 1f, 1f, 1f, 1f, 0f).apply {
                 repeatCount = ObjectAnimator.INFINITE
                 addListener(object: AnimatorListenerAdapter(){
                     override fun onAnimationRepeat(animation: Animator?) {
