@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.model.Croller
 import com.bed.android.bedrock.model.Product
+import com.bed.android.bedrock.vision.CloudVisionFragment
 import com.bed.android.bedrock.vmodel.ProductViewModel
 import com.google.android.material.tabs.TabLayout
 
@@ -21,7 +22,7 @@ class  MainActivity : AppCompatActivity(),
         if(isFragmentContainerEmpty){
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.fragment_container, MainFragment.newInstance())
+                .add(R.id.fragment_container, CloudVisionFragment.newInstance())
                 .commit()
         }
 

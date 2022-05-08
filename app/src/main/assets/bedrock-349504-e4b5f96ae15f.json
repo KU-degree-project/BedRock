@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "bedrock-349504",
+  "private_key_id": "e4b5f96ae15fc2ee9bf23d887d888cefada5849d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDD6dfywhKAcRgR\nmvadTlFyTf1jFfl0lasqVKSKI407iHl0JMbCM7cSP23S/15e93X6bcSBn25BDbM4\nELjrV0R7xflPcwYZvrMMGfofjTEliz9HoAvXKflunIvSNnqe/69AC3qsmQy+yoRq\n0UyuQVKZCbpMKEmokEVvtfvwhWdMGc7553PVO0MYCeUl19BkhBZwtt3QX21wnQoi\n/Dmt8XL1OX3l9Zkl8mBIzKBC9R8ZiYOVG29psmXBWX1oJulPmF3WSldTmP+VsAJj\njdmxlAxmp64p5HYapaaQEl7Q67eIL/+aDjbaVFfMirnmRVNmN/vDnPK79JbuOry+\n+vlK/YhNAgMBAAECggEAAu7tJA4aU1B+LQNONng9+XFn/hQN5lw4Uhuu0/+oxW+r\na90CGdXG46/N7+cRbWgUnOGIW+18a95t5MTBVAq8NIM4EqO0/20uxptb9p15UyfU\n1Hh1vOy8tpaC9GyK5PcMk2+okE2BVpj3JxdHp+ND/pUZ9Dp1MeApHf1STp1cuNOy\nYos2GuJ2LvJXDKqlsDHjxcisytOAwfttM3OHhrdmXa9Ou+KDfzO+f8zKBS0vkBnv\nIyup5SH1y12JossBT5n45I6JZ5DUWplDpxTYHuisRo0CKv6ECraN+uI3G/60lu89\nQv9jEiXi/6yzDJMs+zVxY6UanVBxDaDoN2ixp1JDIQKBgQDppZ0gTml0puG3KMAu\nr/r1ZF9hN1r6O47WRRHMcxiVBqllFYG8YmWlCjB1yCckb8ynznxZ4+ITWFdfNbXb\nHYdfBJYJUojnN37pVzIN7jrWF5fEAbDkvV3Fu5C3hlMUGCELVLn+frp34tWyuboe\nxtGtx1oDMgQHLP+UU4/EldeL7QKBgQDWqBOhcWi266O2f54HXR3Yik0H+pQ+pDZl\nuqKfQcexGgV0RZf2JP7A+QHUhlxMYLBWsZs4A3iNBqF1DY3KqXsdVf6rPwdgU9sR\nhc3y1K+3ACIvbE+8F0V61mmF16gS/2XYW9t5gaMZGPEroJT5bi0UHBePWzm2Bbm7\nFreyMUoh4QKBgC+uCliTZ9XUUG+OM1nTs8TsDMLMBxbVnJqBUdaFDlkrGNp1/xmw\ngsmhQK5ogARhhEQiUSIO7Q3Bk2LslQX4Cq4LQ4r3etSkcJOxpZdOLFeQTPpE1hJ3\nynEVi7zH/qA1JFkpmyMiPW9FrRJh8Gdjb1qlOes5A7VrK2TbgJU/dtMpAoGBAMCf\njw4esPMEvaJ1HqBJBRFd+gYg7IrR3SaotmnnI4VfbmmKUfVF+X29ddD6yTSYx2Tk\nd/9pzfHvc0+Q3B5yu9H1a1TMeJgOZ9VvlwJDrXKwofygW2TUFTtH0OWUQnTZztC6\njVaZ6HwLD9Awh77VCYq0Msgn+r/Gn4atuiYjaPzBAoGAYZXk3DB/p3qCRX6ibYup\nBuzd0z+/n+i4QHn2XumOht5lMctoWW3q6Q/qS/B64hJrTBNwvIWwncw9/94xApou\nHOJLz0e9Wgeo6i0DlxIp3VVPNNumbYY4iMR35iCtLTtWHpbJkBZN7ycSigTr4EAq\nZJXLat7utthz4JSsqJKW9tM=\n-----END PRIVATE KEY-----\n",
+  "client_email": "bedrock@bedrock-349504.iam.gserviceaccount.com",
+  "client_id": "102512608962990759982",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bedrock%40bedrock-349504.iam.gserviceaccount.com"
+}
