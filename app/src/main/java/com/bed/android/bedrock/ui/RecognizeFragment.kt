@@ -5,18 +5,23 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.lifecycleScope
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentRecognizeBinding
 import com.bed.android.bedrock.mlkit.TextRecognizeUtil
+import com.bed.android.bedrock.util.BitmapUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragment_recognize) {
 
-    private val url = "http://gdimg.gmarket.co.kr/2392558284/still/600?ver=1647941445"
+    private val url = "https://gdimg.gmarket.co.kr/2392558284/still/600?ver=1647941445"
     private val requestListener = object : RequestListener<Drawable> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
             Log.d(TAG, "onLoadFailed: failed to load")
@@ -40,8 +45,13 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
     }
 
     private fun loadImageFromUrl() {
-        bind {
-            Glide.with(root).load(url).addListener(requestListener).into(imageRecognize)
+        CoroutineScope(Dispatchers.IO).launch {
+            val bitmap = BitmapUtil.getBitmapFromUrl(url)
+
+            bitmap?.let {
+                val ocrResult = TextRecognizeUtil.getTextFromBitmapByRecognizer(it, ::callback)
+                Log.d(TAG, "loadImageFromUrl: $ocrResult")
+            }
         }
     }
 
