@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragment_recognize) {
 
-    private val url = "https://gdimg.gmarket.co.kr/2392558284/still/600?ver=1647941445"
+    private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/1/0/4/3/1/7/omcKh/4235104317_B.jpg"
     private val requestListener = object : RequestListener<Drawable> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
             Log.d(TAG, "onLoadFailed: failed to load")
@@ -56,6 +56,12 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
     }
 
     private fun callback(list: List<String>) {
+        list.filter {
+            it.contains("만")
+            it.contains("")
+        }
+
+
         binding.textRecognize.text = list.joinToString(" ")
     }
 

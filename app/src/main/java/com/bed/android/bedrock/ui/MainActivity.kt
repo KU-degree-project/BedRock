@@ -21,7 +21,8 @@ class  MainActivity : AppCompatActivity(),
         if(isFragmentContainerEmpty){
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.fragment_container, MainFragment.newInstance())
+//                .add(R.id.fragment_container, MainFragment.newInstance())
+                .add(R.id.fragment_container, RecognizeFragment.newInstance())
                 .commit()
         }
 
