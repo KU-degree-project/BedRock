@@ -24,7 +24,7 @@ import kotlin.math.min
 
 class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragment_recognize) {
 
-    private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/8/1/0/8/4/1/XrUaw/4136810841_B.png"
+    private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/6/1/2/3/0/1/ubCyu/4232612301_B.jpg"
     private val requestListener = object : RequestListener<Drawable> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
             Log.d(TAG, "onLoadFailed: failed to load")
@@ -60,8 +60,8 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
 
     private fun callback(list: List<String>) {
 
-        val target = 1149000.0 // 크롤링해서 정가 가져왔다고 가정
-        val target_short = ceil(target / 10000).toInt() // 만 단위로 나누기
+        val target = 1899000.0 // 크롤링해서 정가 가져왔다고 가정
+        val target_short = (target / 10000).toInt() // 만 단위로 나누기
 
         val t_len = target.toInt().toString().length
         val ts_len = target_short.toString().length
@@ -102,8 +102,9 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
         var t_val = target
         var ts_val = target_short
 
-        val t_limit = t_val * 0.6 // 상식적인 한계 (40% 할인가)
-        val ts_limit = ts_val * 0.6
+        val t_limit = t_val * 0.65 // 상식적인 한계 (35% 할인가)
+        val ts_limit = ts_val * 0.65
+        Log.d(TAG, "$t_limit $ts_limit")
         filtered.forEach {
             if (it.length == ts_len) {
                 ts_val = max(ts_limit.toInt(), min(ts_val, it.toInt()))
