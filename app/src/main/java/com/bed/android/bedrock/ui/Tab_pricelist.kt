@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -47,6 +48,8 @@ class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
         }
         else{
             Log.d(TAG,"updateUI_submit")
+            Log.d(TAG,"prices"+prices.toString())
+
             adapter?.submitList(prices)
             priceRecyclerView.adapter=adapter
         }
@@ -86,6 +89,11 @@ class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
                 orientation= LinearLayoutManager.VERTICAL
             }
 
+        binding_price_list?.viewModel?.priceList?.observe(viewLifecycleOwner) { priceList ->
+            priceList?.let {
+                updateUI(priceList)
+            }
+        }
 
 
 

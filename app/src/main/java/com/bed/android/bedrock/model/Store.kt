@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class Store(
     val thumbnail:String,
     val price:String,
-    val storeLink:String
+    val storeLink:String,
+    var productImg:String
 ) : Parcelable

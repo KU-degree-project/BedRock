@@ -53,13 +53,9 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(R.layout.
         Log.d(TAG,searchText)
 
     }
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        var view=super.onCreateView(inflater, container, savedInstanceState)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.viewModel = ViewModelProvider(this).get(SearchResultViewModel::class.java)
         binding.viewModel?.searchKeyword?.value=": "+searchText
         binding.viewModel?.initProducts()
@@ -77,9 +73,6 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(R.layout.
             }
         }
         showSampleData(true)
-
-
-        return view
     }
 
     private fun updateUI(products: List<Product>){

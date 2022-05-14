@@ -41,7 +41,7 @@ class ProductDetailFragment()
         Log.d(TAG,binding.viewModel.toString())
         GlobalScope.launch(Dispatchers.IO){
             croller.croll_detail(binding.viewModel?.product!!)
-            //    Log.d(TAG, "onCreate: ${binding.viewModel?.product}")
+               Log.d(TAG, "onCreate: ${binding.viewModel?.product}")
             GlobalScope.launch(Dispatchers.Main){
                 loadImage(binding.productImage,binding.viewModel?.product?.img)
             }
