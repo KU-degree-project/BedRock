@@ -24,7 +24,7 @@ import kotlin.math.min
 
 class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragment_recognize) {
 
-    private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/6/1/2/3/0/1/ubCyu/4232612301_B.jpg"
+    private val url = "http://gdimg.gmarket.co.kr/2394422222/still/600?ver=1652430296"
     private val requestListener = object : RequestListener<Drawable> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
             Log.d(TAG, "onLoadFailed: failed to load")
@@ -59,8 +59,9 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
     }
 
     private fun callback(list: List<String>) {
+        Log.d(TAG, list.toString())
 
-        val target = 1899000.0 // 크롤링해서 정가 가져왔다고 가정
+        val target = 1078000.0 // 크롤링해서 정가 가져왔다고 가정
         val target_short = (target / 10000).toInt() // 만 단위로 나누기
 
         val t_len = target.toInt().toString().length
@@ -80,37 +81,45 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
         p_filtered.sortedBy { // 정렬
             -it.toInt()
         }
-        Log.d(TAG, p_filtered.toString())
+        Log.d(TAG, "percentage filtered : $p_filtered")
         var p_val = target
         if (p_filtered.isNotEmpty()){
             p_val *= ((100.0 - p_filtered[0].toDouble()) / 100) // 쿠폰의 퍼센티지가 온전하게 할인되지 않는 경우도 있어서 고려 필요
         }
 
         // 가격으로 판단
-        var filtered = list.map {
-            it.replace("[^\\d]".toRegex(), "") // 숫자 이외의 문자 다 지우기
+        var filtered = mutableListOf<String>()
+        list.map {
+            it.replace("\n", " ") // 줄 내림 없애기
+        }.forEach {
+            filtered.addAll(it.split(" "))
         }
-        filtered = filtered.filter {
+
+        filtered = filtered.map {
+            it.replace("[^\\d]".toRegex(), "")
+        }.filter {
             it.isNotBlank() // 공백 지우기
-        }
-        filtered = filtered.filter {
-            ts_len <= it.length
-            it.length <= t_len
-        }
-        Log.d(TAG, filtered.toString())
+            it.length in ts_len-1..t_len
+        }.toMutableList()
+
+        Log.d(TAG, "price filtered : $filtered")
 
         var t_val = target
         var ts_val = target_short
 
-        val t_limit = t_val * 0.65 // 상식적인 한계 (35% 할인가)
-        val ts_limit = ts_val * 0.65
-        Log.d(TAG, "$t_limit $ts_limit")
+        val t_limit = t_val * 0.7 // 상식적인 한계 (30% 할인가)
+        val ts_limit = ts_val * 0.7
+        Log.d(TAG, "limits : $t_limit, $ts_limit")
         filtered.forEach {
-            if (it.length == ts_len) {
-                ts_val = max(ts_limit.toInt(), min(ts_val, it.toInt()))
+            if (it.length in ts_len-1..ts_len) {
+                if (it.toInt() >= ts_limit) {
+                    ts_val = min(ts_val, it.toInt())
+                }
             }
-            else if (it.length == t_len) {
-                t_val = max(t_limit, min(t_val, it.toDouble()))
+            else if (it.length in t_len-1..t_len) {
+                if (it.toInt() >= t_limit) {
+                    t_val = min(t_val, it.toDouble())
+                }
             }
         }
         ts_val *= 10000
@@ -121,7 +130,7 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
             min_val = p_val.toInt()
         }
 
-        Log.d(TAG, "$t_val $ts_val $p_val")
+        Log.d(TAG, "target : $t_val // shortcut : $ts_val // percent : $p_val")
 
         binding.textRecognize.text = list.joinToString(" ") + "\n***추출된 최저가 : $min_val***"
     }
