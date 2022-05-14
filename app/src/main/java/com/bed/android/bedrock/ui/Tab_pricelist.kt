@@ -78,6 +78,19 @@ class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
         val view=binding_price_list.root
 
 
+
+
+
+
+
+
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         binding_price_list.viewModel= viewModel
         binding_price_list.lifecycleOwner=viewLifecycleOwner
 
@@ -94,19 +107,6 @@ class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
                 updateUI(priceList)
             }
         }
-
-
-
-
-
-
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         viewModel.product?.let {
             updateUI(it.priceList)
         }
