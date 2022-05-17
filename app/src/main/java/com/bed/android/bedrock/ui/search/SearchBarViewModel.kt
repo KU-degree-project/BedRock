@@ -1,43 +1,46 @@
 package com.bed.android.bedrock.ui.search
 
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bed.android.bedrock.di.Injector
 import com.bed.android.bedrock.model.SearchRecord
 import com.bed.android.bedrock.ui.MainActivity.Companion.croller
+import com.bed.android.bedrock.util.TextUtils
 import kotlinx.coroutines.*
 import org.json.JSONArray
+import org.json.JSONObject
 
 class SearchBarViewModel : ViewModel() {
 
     private val sharedPreferences = Injector.getSharedPreferences()
 
-    private val _searchRecord = MutableLiveData<List<SearchRecord>>()
+    val searchKeyword = MutableLiveData("")
+
+    private val _searchRecord = MutableLiveData<List<SearchRecord>>(emptyList())
     val searchRecord: LiveData<List<SearchRecord>>
         get() = _searchRecord
 
     private var popularKeywordJob: Job? = null
 
-    init {
-        loadSearchRecord()
-    }
-
-    private fun loadSearchRecord() {
+    fun loadSearchRecord() {
         val list = mutableListOf<SearchRecord>()
 
         val keywords = sharedPreferences.getString("keywords", null) ?: return
 
         val jsonArray = JSONArray(keywords)
 
-        (0 until jsonArray.length()).forEach {
-            val json = jsonArray.getJSONObject(it)
+        for (i in 0 until jsonArray.length()) {
+            val json = jsonArray.getJSONObject(i)
 
-            list.add(SearchRecord(
-                json.getInt("id"),
-                json.getString("name"),
-                json.getString("date")
-            ))
+            list.add(
+                SearchRecord(
+                    json.getInt("id"),
+                    json.getString("name"),
+                    json.getString("date")
+                )
+            )
         }
 
         _searchRecord.postValue(list)
@@ -50,6 +53,39 @@ class SearchBarViewModel : ViewModel() {
             withContext(Dispatchers.Main) {
                 callback(list)
             }
+        }
+    }
+
+    fun addSearchKeyword(callback: (String) -> Unit) {
+        searchKeyword.value?.let { keyword ->
+            if (keyword.isBlank()) return
+
+            val id = _searchRecord.value?.size ?: 0
+            val record = JSONObject().apply {
+                put("id", id)
+                put("name", keyword)
+                put("date", TextUtils.getFormattedDate())
+            }
+
+            val jsonArray = JSONArray()
+
+            _searchRecord.value?.forEach { searchRecord ->
+                JSONObject().apply {
+                    put("id", searchRecord.recordId)
+                    put("name", searchRecord.productName)
+                    put("date", searchRecord.searchDate)
+                    jsonArray.put(this)
+                }
+            }
+
+            jsonArray.put(record)
+
+            sharedPreferences.edit().apply {
+                putString("keywords", jsonArray.toString())
+                apply()
+            }
+
+            callback(keyword)
         }
     }
 

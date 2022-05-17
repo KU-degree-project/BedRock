@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="viewModel"
-            type="com.bed.android.bedrock.vmodel.SearchRecordViewModel" />
+            name="item"
+            type="com.bed.android.bedrock.model.SearchRecord" />
     </data>
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@{viewModel.keyword}"
+            android:text="@{item.productName}"
             android:textAlignment="textStart"
             android:textColor="?attr/colorPrimary"
             android:textSize="16sp" />
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@{viewModel.searchDate}"
+            android:text="@{item.searchDate}"
             android:textAlignment="textEnd"
             android:textColor="?attr/colorSecondaryVariant"
             android:textSize="16sp" />
