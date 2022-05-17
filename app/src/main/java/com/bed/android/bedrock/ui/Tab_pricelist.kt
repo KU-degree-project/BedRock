@@ -1,3 +1,4 @@
+
 package com.bed.android.bedrock.ui
 
 import android.content.Context
@@ -160,28 +161,3 @@ class Tab_pricelist(private val viewModel:ProductViewModel): Fragment() {
             return PriceHolder(binding)
         }
 
-
-
-        override fun onBindViewHolder(holder: PriceHolder, position: Int) {
-            holder.bind(getItem(position).thumbnail,getItem(position).price,getItem(position).storeLink)
-            Log.d(TAG,"onBindViewHolder")
-        }
-    }
-
-
-
-
-
-
-    companion object{
-
-        private val diffUtil = object : DiffUtil.ItemCallback<Store>() {
-
-            override fun areContentsTheSame(oldItem: Store, newItem: Store): Boolean {
-                return oldItem == newItem
-            }
-            override fun areItemsTheSame(oldItem: Store, newItem: Store) =
-                oldItem.thumbnail == newItem.thumbnail
-        }
-    }
-}

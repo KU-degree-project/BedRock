@@ -3,9 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+<!--        <variable-->
+<!--            name="viewModel"-->
+<!--            type="com.bed.android.bedrock.vmodel.PriceViewModel" />-->
         <variable
-            name="viewModel"
-            type="com.bed.android.bedrock.vmodel.PriceViewModel" />
+            name="item"
+            type="com.bed.android.bedrock.model.Store" />
     </data>
 
     <LinearLayout
@@ -17,7 +20,7 @@
             android:id="@+id/img_product"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            loadImage="@{viewModel.imgUrl}"
+            loadImage="@{item.thumbnail}"
             />
 
         <TextView
@@ -27,7 +30,7 @@
             android:gravity="center"
             android:layout_width="180dp"
             android:layout_height="match_parent"
-            android:text="@{viewModel.price}"
+
             android:fontFamily="@font/fontstyle"
             android:hint="price"
             android:textAlignment="center"

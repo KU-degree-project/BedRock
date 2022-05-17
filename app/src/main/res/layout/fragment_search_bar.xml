@@ -2,12 +2,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="viewModel"
-            type="com.bed.android.bedrock.vmodel.PopularKeywordViewModel" />
-    </data>
+            type="com.bed.android.bedrock.ui.search.SearchBarViewModel" />
 
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -53,7 +55,6 @@
                 android:src="@drawable/search_btn_ripple"
                 tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
-
         </LinearLayout>
 
         <LinearLayout
@@ -75,25 +76,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:textColor="?attr/colorPrimary"
-                android:text="@string/popular_keyword_text" />
+                android:text="@string/popular_keyword_text"
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/popularKeywordTextView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/colorSecondaryVariant"
-                android:text="@{viewModel.keyword}" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rKeywordRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pKeywordLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/pKeywordLayout"
+             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
