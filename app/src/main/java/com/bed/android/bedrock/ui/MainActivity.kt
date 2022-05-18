@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.model.Croller
 import com.bed.android.bedrock.ui.search.SearchBarFragment
+import com.bed.android.bedrock.ui.search.SearchResultFragment
 import com.bed.android.bedrock.vmodel.ProductViewModel
 
 class MainActivity : AppCompatActivity(),

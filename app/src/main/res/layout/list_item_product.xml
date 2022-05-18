@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
-            name="viewModel"
-            type="com.bed.android.bedrock.vmodel.ProductViewModel" />
+            name="item"
+            type="com.bed.android.bedrock.model.Product" />
     </data>
 
     <LinearLayout
@@ -15,7 +15,7 @@
 
         <ImageView
             android:id="@+id/img_product"
-            loadImage="@{viewModel.img}"
+            loadImage="@{item.img}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.9" />
@@ -30,7 +30,6 @@
             android:gravity="center"
             android:hint="product name"
             android:scrollbars="vertical"
-            android:text="@{viewModel.productName}"
             android:textAlignment="center" />
 
 
@@ -42,7 +41,7 @@
             android:fontFamily="@font/fontstyle"
             android:gravity="center"
             android:hint="1000000"
-            android:text="@{viewModel.lowestPrice}"
+            android:text="@{item.lowestPrice}"
             android:textAlignment="center"
             android:textSize="12sp" />
 
