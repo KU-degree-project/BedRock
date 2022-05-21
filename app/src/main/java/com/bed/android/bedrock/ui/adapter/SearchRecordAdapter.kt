@@ -10,7 +10,7 @@ import com.bed.android.bedrock.model.SearchRecord
 
 class SearchRecordAdapter(
     diffCallback: DiffUtil.ItemCallback<SearchRecord>,
-    private val onClick: ((SearchRecord) -> Unit)? = null
+    private val onClick: ((SearchRecord) -> Unit)
 ) : ListAdapter<SearchRecord, SearchRecordHolder>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchRecordHolder {
@@ -20,21 +20,20 @@ class SearchRecordAdapter(
             false
         )
 
-        return SearchRecordHolder(binding, onClick)
+        return SearchRecordHolder(binding)
     }
 
     override fun onBindViewHolder(holder: SearchRecordHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onClick)
     }
 }
 
 class SearchRecordHolder(
-    private val binding: ListItemSearchrecordBinding,
-    private val onClick: ((SearchRecord) -> Unit)? = null
+    private val binding: ListItemSearchrecordBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(searchRecord: SearchRecord) {
-        binding.root.setOnClickListener { onClick?.invoke(searchRecord) }
+    fun bind(searchRecord: SearchRecord, onClick: ((SearchRecord) -> Unit)) {
+        binding.root.setOnClickListener { onClick.invoke(searchRecord) }
         binding.item = searchRecord
     }
 }
