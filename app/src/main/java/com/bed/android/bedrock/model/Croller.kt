@@ -103,11 +103,11 @@ class Croller() {
     }
 
     fun croll_detail(product: Product): Product {
-
+        val temp = product.copy()
         var shopList= arrayListOf<String>("쿠팡","11번가","옥션","G마켓","인터파크")
         var shopLinkList= arrayListOf<String>("http://www.coupang.com/vp/products")
         try {
-            var doc = Jsoup.connect(product.product_link).get()
+            var doc = Jsoup.connect(temp.product_link).get()
 
             var thumbnail=doc.select(".summary_left")
                 .select(".photo_w")
@@ -196,16 +196,16 @@ class Croller() {
                     product_price_list.add(Store("https:"+imgSrc,price.text(),link,"https:"+productImg))
 
                 }
-                product.img="https:"+thumbnail.toString()
-                product.priceList=product_price_list
+                temp.img="https:"+thumbnail.toString()
+                temp.priceList=product_price_list
 
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            return product
+            return temp
         }
 
-        return product
+        return temp
 
     }
 

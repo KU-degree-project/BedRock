@@ -89,9 +89,12 @@ class SearchBarViewModel : ViewModel() {
         }
     }
 
+    fun onDestroyView() {
+        popularKeywordJob?.cancel()
+    }
+
     override fun onCleared() {
         popularKeywordJob?.cancel()
-
         super.onCleared()
     }
 }

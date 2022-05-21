@@ -1,44 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-<!--        <variable-->
-<!--            name="viewModel"-->
-<!--            type="com.bed.android.bedrock.vmodel.PriceViewModel" />-->
+
         <variable
             name="item"
             type="com.bed.android.bedrock.model.Store" />
+
     </data>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:gravity="center"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
         <ImageView
             android:id="@+id/img_product"
             android:layout_width="80dp"
-            android:layout_height="match_parent"
-            loadImage="@{item.thumbnail}"
-            />
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/text_product_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:loadImage="@{item.thumbnail}" />
 
         <TextView
             android:id="@+id/text_product_name"
-            android:scrollbars="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_width="180dp"
-            android:layout_height="match_parent"
-
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/fontstyle"
-            android:hint="price"
+            android:gravity="center"
+            android:scrollbars="vertical"
+            android:text="@{item.price}"
             android:textAlignment="center"
-            android:layout_marginRight="20dp"
-            />
+            app:layout_constraintBottom_toBottomOf="@id/img_product"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/img_product"
+            app:layout_constraintTop_toTopOf="@id/img_product" />
 
-
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

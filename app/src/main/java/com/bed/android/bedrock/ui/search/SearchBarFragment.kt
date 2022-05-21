@@ -3,6 +3,7 @@ package com.bed.android.bedrock.ui.search
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.NullPointerException
 
 class SearchBarFragment : BaseFragment<FragmentSearchBarBinding>(R.layout.fragment_search_bar) {
 
@@ -50,6 +52,11 @@ class SearchBarFragment : BaseFragment<FragmentSearchBarBinding>(R.layout.fragme
         initView()
     }
 
+    override fun onDestroyView() {
+        viewModel.onDestroyView()
+        super.onDestroyView()
+    }
+
     private fun initView() {
         viewModel.loadSearchRecord()
 
@@ -76,21 +83,27 @@ class SearchBarFragment : BaseFragment<FragmentSearchBarBinding>(R.layout.fragme
     }
 
     private fun startBlinkAnimation(list: List<String>) {
-        val animation = AnimationUtils.loadAnimation(context, R.anim.fade_inandout)
+        try {
+            val animation = AnimationUtils.loadAnimation(context, R.anim.fade_inandout)
 
-        binding.popularKeywordTextView.apply {
-            CoroutineScope(Dispatchers.Main).launch {
-                startAnimation(animation)
-                (0..Int.MAX_VALUE).forEach {
-                    delay(4000)
-                    text = list[it % 10]
+            binding.popularKeywordTextView.apply {
+                CoroutineScope(Dispatchers.Main).launch {
+                    startAnimation(animation)
+                    (0..Int.MAX_VALUE).forEach {
+                        delay(4000)
+                        text = list[it % 10]
+                    }
                 }
             }
+        } catch (e: NullPointerException) {
+            Log.d(TAG, "startBlinkAnimation: $e")
         }
     }
 
 
     companion object {
+
+        private const val TAG = "SearchBarFragment"
 
         fun newInstance() = SearchBarFragment()
 

@@ -5,25 +5,28 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentSearchResultBinding
 import com.bed.android.bedrock.model.Product
 import com.bed.android.bedrock.ui.BaseFragment
 import com.bed.android.bedrock.ui.adapter.SearchResultAdapter
-import com.bed.android.bedrock.vmodel.ProductViewModel
+import kotlinx.coroutines.launch
 
 
 class SearchResultFragment :
     BaseFragment<FragmentSearchResultBinding>(R.layout.fragment_search_result) {
 
     interface Callbacks {
-        fun onProductSelected(viewModel: ProductViewModel)
+        fun onProductSelected(product: Product)
     }
 
     private var callbacks: Callbacks? = null
     private val viewModel by viewModels<SearchResultViewModel>()
-    private val adapter = SearchResultAdapter(diffUtil)
+    private val adapter = SearchResultAdapter(diffUtil) { product ->
+        callbacks?.onProductSelected(product)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -41,10 +44,17 @@ class SearchResultFragment :
         arguments?.let { bundle ->
             val keyword = bundle.getString("searchKeyword") ?: return@let
 
-            viewModel.startCrawling(keyword, ::onCrawlingFinished)
+            lifecycleScope.launch {
+                viewModel.startCrawling(keyword, ::onCrawlingFinished)
+            }
 
             initView(keyword)
         }
+    }
+
+    override fun onDestroyView() {
+        viewModel.onDestroyView()
+        super.onDestroyView()
     }
 
     private fun initView(keyword: String) {

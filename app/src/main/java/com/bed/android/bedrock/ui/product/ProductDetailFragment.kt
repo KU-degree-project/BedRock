@@ -1,19 +1,23 @@
-package com.bed.android.bedrock.ui
+package com.bed.android.bedrock.ui.product
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentProductDetailBinding
 import com.bed.android.bedrock.model.Product
+import com.bed.android.bedrock.ui.BaseFragment
+import com.bed.android.bedrock.ui.search.result.TabDescription
+import com.bed.android.bedrock.ui.search.result.TabPriceList
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-
-
-private const val TAG = "ProductDetailFragment"
+import kotlinx.coroutines.launch
 
 class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(R.layout.fragment_product_detail) {
 
@@ -22,30 +26,47 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(R.layou
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.viewModel = viewModel
+
         arguments?.let {
             val product = it.getParcelable("product") as? Product ?: return@let
 
-            viewModel.startCrawl(product)
+            lifecycleScope.launch {
+                binding.sflSample.startShimmer()
+                viewModel.startCrawl(product, ::onCrawlingFinished)
+            }
         }
-//
-//        binding.viewModel=ViewModelProvider(this).get(ProductViewModel::class.java)
-//        binding.viewModel?.product=arguments?.getParcelable("product")
-//        Log.d(TAG,binding.viewModel.toString())
-//        GlobalScope.launch(Dispatchers.IO){
-//            croller.croll_detail(binding.viewModel?.product!!)
-//               Log.d(TAG, "onCreate: ${binding.viewModel?.product}")
-//            GlobalScope.launch(Dispatchers.Main){
-//                loadImage(binding.productImage,binding.viewModel?.product?.img)
-//            }
-//        }
-//
-        val pagerAdapter = PagerAdapter(requireActivity())
-        pagerAdapter.addFragment(Tab_description(binding.viewModel!!))
-        pagerAdapter.addFragment(TabPriceList())
-        binding.viewpager.adapter = pagerAdapter
-        TabLayoutMediator(binding.tabDetail, binding.viewpager, true, true, pagerAdapter).attach()
-
     }
+
+    override fun onDestroyView() {
+        viewModel.onDestroyView()
+        super.onDestroyView()
+    }
+
+    private fun onCrawlingFinished(product: Product) {
+        Log.d(TAG, "onCrawlingFinished: $product")
+
+        val pagerAdapter = PagerAdapter(requireActivity())
+        pagerAdapter.addFragment(TabDescription.newInstance(product))
+        pagerAdapter.addFragment(TabPriceList.newInstance(product))
+
+        bind {
+            productImage.isVisible = true
+            textTitle.isVisible = true
+
+            sflSample.apply {
+                stopShimmer()
+                visibility = View.GONE
+            }
+            tabDetail.isVisible = true
+
+            with(viewpager) {
+                adapter = pagerAdapter
+                TabLayoutMediator(tabDetail, this, true, true, pagerAdapter).attach()
+            }
+        }
+    }
+
 
     private inner class PagerAdapter(private val fa: FragmentActivity)
         : FragmentStateAdapter(fa), TabLayoutMediator.TabConfigurationStrategy {
@@ -85,8 +106,14 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(R.layou
 
     companion object {
 
-        fun newInstance(): ProductDetailFragment {
-            return ProductDetailFragment()
+        private const val TAG = "ProductDetailFragment"
+
+        fun newInstance(product: Product): ProductDetailFragment {
+            return ProductDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable("product", product)
+                }
+            }
         }
     }
 }

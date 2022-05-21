@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.model.Croller
+import com.bed.android.bedrock.model.Product
+import com.bed.android.bedrock.ui.product.ProductDetailFragment
 import com.bed.android.bedrock.ui.search.SearchBarFragment
 import com.bed.android.bedrock.ui.search.SearchResultFragment
-import com.bed.android.bedrock.vmodel.ProductViewModel
+import com.bed.android.bedrock.ui.search.result.TabPriceList
 
 class MainActivity : AppCompatActivity(),
     SearchBarFragment.Callbacks,
@@ -40,11 +42,8 @@ class MainActivity : AppCompatActivity(),
     }
 
 
-    override fun onProductSelected(viewModel: ProductViewModel) {
-        val fragment = ProductDetailFragment.newInstance()
-        var bundle = Bundle()
-        bundle.putParcelable("product", viewModel.product)
-        fragment.arguments = bundle
+    override fun onProductSelected(product: Product) {
+        val fragment = ProductDetailFragment.newInstance(product)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)

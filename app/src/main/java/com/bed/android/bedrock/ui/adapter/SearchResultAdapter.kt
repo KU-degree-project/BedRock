@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bed.android.bedrock.databinding.ListItemProductBinding
 import com.bed.android.bedrock.model.Product
 
-class SearchResultAdapter(diffUtil: DiffUtil.ItemCallback<Product>) :
-    ListAdapter<Product, SearchResultHolder>(diffUtil) {
+class SearchResultAdapter(
+    diffUtil: DiffUtil.ItemCallback<Product>,
+    private val onClick: (Product) -> Unit
+) : ListAdapter<Product, SearchResultHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchResultHolder {
         val binding = ListItemProductBinding.inflate(
@@ -24,7 +26,7 @@ class SearchResultAdapter(diffUtil: DiffUtil.ItemCallback<Product>) :
     }
 
     override fun onBindViewHolder(holder: SearchResultHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onClick)
     }
 
 }
@@ -35,7 +37,8 @@ class SearchResultHolder(private val binding: ListItemProductBinding) :
     private var isDescription = false
 
     @SuppressLint("ClickableViewAccessibility")
-    fun bind(item: Product) {
+    fun bind(item: Product, onClick: (Product) -> Unit) {
+        binding.root.setOnClickListener { onClick(item) }
         binding.item = item
         binding.textProductName.text = item.name
         binding.detailBtn.apply {

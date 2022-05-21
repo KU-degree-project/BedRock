@@ -5,18 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bed.android.bedrock.model.Product
 import com.bed.android.bedrock.ui.MainActivity.Companion.croller
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class SearchResultViewModel : ViewModel() {
 
     private val _productList = MutableLiveData<List<Product>>(emptyList())
     val productList: LiveData<List<Product>> = _productList
 
-    fun startCrawling(keyword: String, callback: (Int) -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
+    private var productCrawlingJob: Job? = null
+
+    suspend fun startCrawling(keyword: String, callback: (Int) -> Unit) {
+        productCrawlingJob = CoroutineScope(Dispatchers.IO).launch {
             val result = croller.croll_list(keyword)
 
             _productList.postValue(result)
@@ -25,5 +24,14 @@ class SearchResultViewModel : ViewModel() {
                 callback(result.size)
             }
         }
+    }
+
+    fun onDestroyView() {
+        productCrawlingJob?.cancel()
+    }
+
+    override fun onCleared() {
+        productCrawlingJob?.cancel()
+        super.onCleared()
     }
 }
