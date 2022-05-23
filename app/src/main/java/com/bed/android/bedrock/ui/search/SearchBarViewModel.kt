@@ -46,8 +46,8 @@ class SearchBarViewModel : ViewModel() {
         _searchRecord.postValue(list)
     }
 
-    fun fetchPopularKeyword(callback: (List<String>) -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
+    suspend fun fetchPopularKeyword(callback: (List<String>) -> Unit) {
+        popularKeywordJob = CoroutineScope(Dispatchers.IO).launch {
             val list = croller.croll_keywords()
 
             withContext(Dispatchers.Main) {
