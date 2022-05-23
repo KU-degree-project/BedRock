@@ -54,7 +54,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
                 // 타이틀 글자 위로 올려보내기
                 ObjectAnimator.ofFloat(titleText, "translationY", -1000f).apply {
-                    duration = 200
+                    duration = 350
+                    interpolator = DecelerateInterpolator()
                     start()
                 }
             }
