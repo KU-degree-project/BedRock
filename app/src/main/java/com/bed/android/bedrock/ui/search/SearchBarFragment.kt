@@ -83,6 +83,8 @@ class SearchBarFragment : BaseFragment<FragmentSearchBarBinding>(R.layout.fragme
     }
 
     private fun startBlinkAnimation(list: List<String>) {
+        if (list.isEmpty()) return
+
         try {
             val animation = AnimationUtils.loadAnimation(context, R.anim.fade_inandout)
 
