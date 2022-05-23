@@ -6,6 +6,8 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentMainBinding
 import com.bed.android.bedrock.ui.search.SearchBarFragment
@@ -18,12 +20,14 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         bind {
             ObjectAnimator.ofFloat(searchBarView, "translationY", -1000f, -((root.height - searchBarView.height) / 2 - TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 8f, requireContext().resources.displayMetrics))).apply {
-                duration = 200
+                interpolator = DecelerateInterpolator()
+                duration = 350
                 start()
             }
 
             ObjectAnimator.ofFloat(titleText, "translationY", -1000f, 0f).apply {
-                duration = 200
+                duration = 350
+                interpolator = DecelerateInterpolator()
                 start()
             }
 
@@ -33,7 +37,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 // 검색창을 위한 Animation
                 ObjectAnimator.ofFloat(searchBarView, "translationY", -((root.height - searchBarView.height) / 2 - TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, 8f, requireContext().resources.displayMetrics))).apply {
-                    duration = 200
+                    duration = 350
+                    interpolator = DecelerateInterpolator()
                     addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
