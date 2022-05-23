@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.ListItemProductBinding
 import com.bed.android.bedrock.model.Product
 
@@ -58,5 +60,6 @@ class SearchResultHolder(private val binding: ListItemProductBinding) :
                 isDescription = !isDescription
             }
         }
+        binding.root.animation = AnimationUtils.loadAnimation(binding.root.context, R.anim.item_create)
     }
 }
