@@ -2,6 +2,7 @@ package com.bed.android.bedrock.ui
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import androidx.core.graphics.drawable.toBitmap
@@ -15,15 +16,20 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.googlecode.tesseract.android.TessBaseAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import kotlin.io.path.outputStream
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
 class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragment_recognize) {
 
+    private lateinit var dataPath:String
     private val url = "http://gdimg.gmarket.co.kr/2394422222/still/600?ver=1652430296"
     private val requestListener = object : RequestListener<Drawable> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -43,8 +49,37 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        dataPath = context?.filesDir?.absolutePath + "/tesseract/"
         loadImageFromUrl()
+    }
+
+    private fun checkFiles(dir:File, language:String){
+        if (!dir.exists() && dir.mkdirs()) {
+            copyFiles(language)
+        }
+
+        if (dir.exists()) {
+            val datafilePath = "$dataPath/tessdata/$language.traineddata"
+            val dataFile = File(datafilePath)
+            if (!dataFile.exists()) {
+                copyFiles(language)
+            }
+        }
+    }
+
+    private fun copyFiles(language:String){
+        val filePath = "$dataPath/tessdata/$language.traineddata"
+        val am = context?.assets
+
+        am?.let {
+            val ipStream = it.open("tessdata/$language.traineddata")
+            val file = File(filePath)
+            ipStream.use { input ->
+                file.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
     }
 
     private fun loadImageFromUrl() {
@@ -54,6 +89,19 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
             bitmap?.let {
                 val ocrResult = TextRecognizeUtil.getTextFromBitmapByRecognizer(it, ::callback)
                 Log.d(TAG, "loadImageFromUrl: $ocrResult")
+
+                val tess = TessBaseAPI()
+                checkFiles(File(dataPath + "tessdata/"), "kor")
+                checkFiles(File(dataPath + "tessdata/"), "eng")
+
+                tess.init(dataPath, "kor+eng")
+                tess.setImage(it)
+                val tessResult = tess.utF8Text
+                Log.d(TAG, "tess: $tessResult")
+
+
+
+                Log.d(TAG, "dataPath : $dataPath")
             }
         }
     }
