@@ -32,7 +32,7 @@ import kotlin.math.min
 class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragment_recognize) {
 
     private lateinit var dataPath:String
-    private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/1/0/4/3/1/7/omcKh/4235104317_B.jpg"
+    private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/9/1/0/9/4/4/yWkGI/3468910944_B.jpg"
     private val requestListener = object : RequestListener<Drawable> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
             Log.d(TAG, "onLoadFailed: failed to load")
@@ -73,39 +73,20 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
     private fun callback(list: List<String>) {
         Log.d(TAG, list.toString())
 
-        val target = 2449000.0 // 크롤링해서 정가 가져왔다고 가정
+        val target = 1520160.0 // 크롤링해서 정가 가져왔다고 가정
         val target_short = (target / 10000).toInt() // 만 단위로 나누기
+        var p_val = target
 
         val t_len = target.toInt().toString().length
         val ts_len = target_short.toString().length
 
-        // 퍼센티지 판단
-        var p_filtered = list.filter {
-            it.contains("%")
-        }
-        p_filtered = p_filtered.map {
-            it.replace("[^\\d]".toRegex(), "") // 숫자 이외의 문자 다 지우기
-        }
-        p_filtered = p_filtered.filter {
-            it.isNotBlank() // 공백 지우기
-            it.toInt() < 100
-        }
-        p_filtered.sortedBy { // 정렬
-            -it.toInt()
-        }
-        Log.d(TAG, "percentage filtered : $p_filtered")
-        var p_val = target
-        if (p_filtered.isNotEmpty()){
-            p_val *= ((100.0 - p_filtered[0].toDouble()) / 100) // 쿠폰의 퍼센티지가 온전하게 할인되지 않는 경우도 있어서 고려 필요
-        }
-
         // 가격으로 판단
-        var filtered = mutableListOf<String>()
+
         list.filter {
             it.contains("\\d[만원]\$".toRegex())
-        }.forEach {
-            filtered.addAll(it.split(" "))
         }
+        var filtered = mutableListOf<String>()
+        filtered.addAll(list)
 
         filtered = filtered.map {
             it.replace("[^\\d]".toRegex(), "")
@@ -113,8 +94,28 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
             it.isNotBlank() // 공백 지우기
             it.length in ts_len-1..t_len
         }.toMutableList()
-
         Log.d(TAG, "price filtered : $filtered")
+
+        if (filtered.isEmpty()){
+            // 퍼센티지 판단
+            var p_filtered = list.filter {
+                it.contains("%")
+            }
+            p_filtered = p_filtered.map {
+                it.replace("[^\\d]".toRegex(), "") // 숫자 이외의 문자 다 지우기
+            }
+            p_filtered = p_filtered.filter {
+                it.isNotBlank() // 공백 지우기
+                it.toInt() < 100
+            }
+            p_filtered.sortedBy { // 정렬
+                -it.toInt()
+            }
+            Log.d(TAG, "percentage filtered : $p_filtered")
+            if (p_filtered.isNotEmpty()){
+                p_val *= ((100.0 - p_filtered[0].toDouble()) / 100) // 쿠폰의 퍼센티지가 온전하게 할인되지 않는 경우도 있어서 고려 필요
+            }
+        }
 
         var t_val = target
         var ts_val = target_short
@@ -144,7 +145,7 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
 
         Log.d(TAG, "target : $t_val // shortcut : $ts_val // percent : $p_val")
         CoroutineScope(Dispatchers.Main).launch{
-            binding.textRecognize.text = list.joinToString(" ") + "\n***추출된 최저가 : $min_val***"
+            binding.textRecognize.text = list.joinToString(" ") + "\n***추출된 최저가 : ${min_val}원***"
         }
     }
 
