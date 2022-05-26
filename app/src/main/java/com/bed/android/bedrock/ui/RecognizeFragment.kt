@@ -1,5 +1,7 @@
 package com.bed.android.bedrock.ui
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Environment
@@ -10,6 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentRecognizeBinding
 import com.bed.android.bedrock.mlkit.TextRecognizeUtil
+import com.bed.android.bedrock.retrofit.KakaoApi
+import com.bed.android.bedrock.retrofit.OCRConstants
+import com.bed.android.bedrock.retrofit.OCRResponse
+import com.bed.android.bedrock.retrofit.RetrofitInstance
 import com.bed.android.bedrock.util.BitmapUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -20,6 +26,16 @@ import com.googlecode.tesseract.android.TessBaseAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.io.path.outputStream
@@ -30,7 +46,7 @@ import kotlin.math.min
 class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragment_recognize) {
 
     private lateinit var dataPath:String
-    private val url = "http://gdimg.gmarket.co.kr/2394422222/still/600?ver=1652430296"
+    private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/4/9/9/0/5/8/nIsPx/4265499058_B.jpg"
     private val requestListener = object : RequestListener<Drawable> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
             Log.d(TAG, "onLoadFailed: failed to load")
@@ -90,6 +106,7 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
                 val ocrResult = TextRecognizeUtil.getTextFromBitmapByRecognizer(it, ::callback)
                 Log.d(TAG, "loadImageFromUrl: $ocrResult")
 
+                // 테서렉트
                 val tess = TessBaseAPI()
                 checkFiles(File(dataPath + "tessdata/"), "kor")
                 checkFiles(File(dataPath + "tessdata/"), "eng")
@@ -99,11 +116,49 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
                 val tessResult = tess.utF8Text
                 Log.d(TAG, "tess: $tessResult")
 
+                // Kakao OCR
+                val sendPart = MultipartBody.Part.createFormData(
+                    "image",
+                    "photo",
+                    RequestBody.create(
+                        MediaType.parse("multipart/form-data"),
+                        bitmapToByteArray(bitmap)
+                    )
+                )
+                val ocrCall = RetrofitInstance.kakaoApi.getOCR(sendPart)
+                ocrCall.enqueue(object : Callback<OCRResponse?>{
+                    override fun onResponse(
+                        call: Call<OCRResponse?>,
+                        response: Response<OCRResponse?>
+                    ) {
+                        if (response.isSuccessful) {
+                            val result = response.body()?.result
 
+                            result?.let {
+                                val words = mutableListOf<String>()
+                                result.forEach {
+                                    words.addAll(it!!.words)
+                                }
+                                Log.d(TAG, "Success, words => ${words}")
+                            }
+                        }
+                        else{
+                            Log.d(TAG, "Failed : $response")
+                        }
+                    }
 
-                Log.d(TAG, "dataPath : $dataPath")
+                    override fun onFailure(call: Call<OCRResponse?>, t: Throwable) {
+                        Log.d(TAG, "Failure : ${t.message}")
+                    }
+                })
             }
         }
+    }
+
+    private fun bitmapToByteArray(bitmap:Bitmap):ByteArray {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        return stream.toByteArray()
     }
 
     private fun callback(list: List<String>) {
