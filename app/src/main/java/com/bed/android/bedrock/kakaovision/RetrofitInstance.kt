@@ -1,4 +1,4 @@
-package com.bed.android.bedrock.retrofit
+package com.bed.android.bedrock.kakaovision
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

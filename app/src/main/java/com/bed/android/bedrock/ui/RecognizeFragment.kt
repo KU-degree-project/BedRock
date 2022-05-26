@@ -1,52 +1,38 @@
 package com.bed.android.bedrock.ui
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.View
 import androidx.core.graphics.drawable.toBitmap
-import androidx.lifecycle.lifecycleScope
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentRecognizeBinding
-import com.bed.android.bedrock.mlkit.TextRecognizeUtil
-import com.bed.android.bedrock.retrofit.KakaoApi
-import com.bed.android.bedrock.retrofit.OCRConstants
-import com.bed.android.bedrock.retrofit.OCRResponse
-import com.bed.android.bedrock.retrofit.RetrofitInstance
+import com.bed.android.bedrock.kakaovision.TextRecognizeUtil
+import com.bed.android.bedrock.kakaovision.OCRResponse
+import com.bed.android.bedrock.kakaovision.RetrofitInstance
 import com.bed.android.bedrock.util.BitmapUtil
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.googlecode.tesseract.android.TessBaseAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import kotlin.io.path.outputStream
-import kotlin.math.ceil
-import kotlin.math.max
 import kotlin.math.min
 
 class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragment_recognize) {
 
     private lateinit var dataPath:String
-    private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/4/9/9/0/5/8/nIsPx/4265499058_B.jpg"
+    private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/1/0/4/3/1/7/omcKh/4235104317_B.jpg"
     private val requestListener = object : RequestListener<Drawable> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
             Log.d(TAG, "onLoadFailed: failed to load")
@@ -69,102 +55,25 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
         loadImageFromUrl()
     }
 
-    private fun checkFiles(dir:File, language:String){
-        if (!dir.exists() && dir.mkdirs()) {
-            copyFiles(language)
-        }
-
-        if (dir.exists()) {
-            val datafilePath = "$dataPath/tessdata/$language.traineddata"
-            val dataFile = File(datafilePath)
-            if (!dataFile.exists()) {
-                copyFiles(language)
-            }
-        }
-    }
-
-    private fun copyFiles(language:String){
-        val filePath = "$dataPath/tessdata/$language.traineddata"
-        val am = context?.assets
-
-        am?.let {
-            val ipStream = it.open("tessdata/$language.traineddata")
-            val file = File(filePath)
-            ipStream.use { input ->
-                file.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
-        }
-    }
-
     private fun loadImageFromUrl() {
         CoroutineScope(Dispatchers.IO).launch {
             val bitmap = BitmapUtil.getBitmapFromUrl(url)
 
             bitmap?.let {
-                val ocrResult = TextRecognizeUtil.getTextFromBitmapByRecognizer(it, ::callback)
-                Log.d(TAG, "loadImageFromUrl: $ocrResult")
-
-                // 테서렉트
-                val tess = TessBaseAPI()
-                checkFiles(File(dataPath + "tessdata/"), "kor")
-                checkFiles(File(dataPath + "tessdata/"), "eng")
-
-                tess.init(dataPath, "kor+eng")
-                tess.setImage(it)
-                val tessResult = tess.utF8Text
-                Log.d(TAG, "tess: $tessResult")
-
                 // Kakao OCR
-                val sendPart = MultipartBody.Part.createFormData(
-                    "image",
-                    "photo",
-                    RequestBody.create(
-                        MediaType.parse("multipart/form-data"),
-                        bitmapToByteArray(bitmap)
-                    )
-                )
-                val ocrCall = RetrofitInstance.kakaoApi.getOCR(sendPart)
-                ocrCall.enqueue(object : Callback<OCRResponse?>{
-                    override fun onResponse(
-                        call: Call<OCRResponse?>,
-                        response: Response<OCRResponse?>
-                    ) {
-                        if (response.isSuccessful) {
-                            val result = response.body()?.result
-
-                            result?.let {
-                                val words = mutableListOf<String>()
-                                result.forEach {
-                                    words.addAll(it!!.words)
-                                }
-                                Log.d(TAG, "Success, words => ${words}")
-                            }
-                        }
-                        else{
-                            Log.d(TAG, "Failed : $response")
-                        }
-                    }
-
-                    override fun onFailure(call: Call<OCRResponse?>, t: Throwable) {
-                        Log.d(TAG, "Failure : ${t.message}")
-                    }
-                })
+                val sendPart = TextRecognizeUtil.createFormDataFromBitmap(it)
+                val ocrResult = TextRecognizeUtil.getTextFromOCR(sendPart, ::callback)
+                Log.d(TAG, "loadImageFromUrl: $ocrResult")
             }
         }
     }
 
-    private fun bitmapToByteArray(bitmap:Bitmap):ByteArray {
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        return stream.toByteArray()
-    }
+
 
     private fun callback(list: List<String>) {
         Log.d(TAG, list.toString())
 
-        val target = 1078000.0 // 크롤링해서 정가 가져왔다고 가정
+        val target = 2449000.0 // 크롤링해서 정가 가져왔다고 가정
         val target_short = (target / 10000).toInt() // 만 단위로 나누기
 
         val t_len = target.toInt().toString().length
@@ -192,8 +101,8 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
 
         // 가격으로 판단
         var filtered = mutableListOf<String>()
-        list.map {
-            it.replace("\n", " ") // 줄 내림 없애기
+        list.filter {
+            it.contains("\\d[만원]\$".toRegex())
         }.forEach {
             filtered.addAll(it.split(" "))
         }
@@ -234,8 +143,9 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
         }
 
         Log.d(TAG, "target : $t_val // shortcut : $ts_val // percent : $p_val")
-
-        binding.textRecognize.text = list.joinToString(" ") + "\n***추출된 최저가 : $min_val***"
+        CoroutineScope(Dispatchers.Main).launch{
+            binding.textRecognize.text = list.joinToString(" ") + "\n***추출된 최저가 : $min_val***"
+        }
     }
 
     companion object {

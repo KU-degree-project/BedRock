@@ -1,9 +1,7 @@
-package com.bed.android.bedrock.retrofit
+package com.bed.android.bedrock.kakaovision
 
 import okhttp3.MultipartBody
-import org.json.JSONObject
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.*
 
 interface KakaoApi {
