@@ -1,9 +1,13 @@
 package com.bed.android.bedrock.model
 
+import android.provider.DocumentsContract
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import java.io.IOException
 
 private const val TAG="Croller"
@@ -23,7 +27,7 @@ class Croller() {
             val url_basic = url_front + url + url_back
             var doc = Jsoup.connect(url_basic).get()
             var productList = doc.select(".product_list").select(".prod_item")
-
+            Log.d(TAG,productList.toString())
             if (productList.isEmpty()) {
                 Log.d(TAG, "null")
                 return ArrayList<Product>()
@@ -99,11 +103,11 @@ class Croller() {
     }
 
     fun croll_detail(product: Product): Product {
-
+        val temp = product.copy()
         var shopList= arrayListOf<String>("쿠팡","11번가","옥션","G마켓","인터파크")
         var shopLinkList= arrayListOf<String>("http://www.coupang.com/vp/products")
         try {
-            var doc = Jsoup.connect(product.product_link).get()
+            var doc = Jsoup.connect(temp.product_link).get()
 
             var thumbnail=doc.select(".summary_left")
                 .select(".photo_w")
@@ -124,6 +128,8 @@ class Croller() {
                     val imgSrc=e.select(".logo_over").select("img").attr("src")
                     val price=e.select(".price").select(".prc_t")
                     var link=e.select(".logo_over a").attr("href")
+                    var shopDoc:Document
+                    var productImg:String?=""
 
                     if(!shopList.contains(shopName))
                         continue
@@ -132,34 +138,74 @@ class Croller() {
                     var productNumber=if(shopName=="쿠팡"){link.substring(productNumberStartIndex,productNumberStartIndex+12)}
                     else{link.substring(productNumberStartIndex,productNumberStartIndex+10)}
 
-
                     when(shopName){
-                        "G마켓"->
-                            link="http://item.gmarket.co.kr/DetailView/Item.asp?goodscode="+productNumber
-                        "11번가"->
+
+                        "G마켓"->{
+                            link =
+                                "http://item.gmarket.co.kr/DetailView/Item.asp?goodscode=" + productNumber
+                            shopDoc = Jsoup.connect(link).get()
+                            productImg=shopDoc.select(".thumb-gallery")
+                                .select(".box__viewer-container")
+                                .select(".viewer")
+                                .select(".on a")
+                                .select("img")
+                                .attr("src")
+
+                        }
+                        "11번가"->{
                             link="https://www.11st.co.kr/products/"+productNumber
-                        "옥션"->
+                            shopDoc = Jsoup.connect(link).get()
+                            productImg=shopDoc.select(".l_product_side_view")
+                                .select(".img_full")
+                                .select("img")
+                                .attr("src")
+
+
+
+                        }
+
+                        "옥션"->{
                             link="http://itempage3.auction.co.kr/DetailView.aspx?ItemNo="+productNumber
-                        "인터파크"->
+                            shopDoc = Jsoup.connect(link).get()
+                            productImg=shopDoc.select(".thumb-gallery")
+                                .select(".box__viewer-container")
+                                .select(".viewer")
+                                .select(".on a")
+                                .select("img")
+                                .attr("src")
+
+
+                        }
+                        "인터파크"->{
                             link="https://shopping.interpark.com/product/productInfo.do?prdNo="+productNumber
-                        else->
+                            val lastfournumber=
+                                        "/"+productNumber[productNumber.length-4]+
+                                        "/"+productNumber[productNumber.length-3]+
+                                        "/"+productNumber[productNumber.length-2]+
+                                        "/"+productNumber[productNumber.length-1]+"/"
+
+                            productImg="https://openimage.interpark.com/goods_image_big"+lastfournumber+productNumber+"_l.jpg"
+                        }
+                        else->{
                             link="www.google.com"
+
+                        }
                     }
                     Log.d("ProductNum",productNumber)
 
-                    product_price_list.add(Store("https:"+imgSrc,price.text(),link))
+                    product_price_list.add(Store("https:"+imgSrc,price.text(),link,"https:"+productImg))
 
                 }
-                product.img="https:"+thumbnail.toString()
-                product.priceList=product_price_list
+                temp.img="https:"+thumbnail.toString()
+                temp.priceList=product_price_list
 
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            return product
+            return temp
         }
 
-        return product
+        return temp
 
     }
 

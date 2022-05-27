@@ -53,14 +53,7 @@ class StorePageFragment : Fragment(){
         }
         web_view.webViewClient= object:WebViewClient(){
 
-            override fun onReceivedError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                error: WebResourceError?
-            ) {
-                super.onReceivedError(view, request, error)
-                Toast.makeText(requireContext(),"error",Toast.LENGTH_SHORT).show()
-            }
+
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
