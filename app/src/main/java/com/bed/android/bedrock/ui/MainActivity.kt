@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity(),
     TabPriceList.Callbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_BedRock)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
