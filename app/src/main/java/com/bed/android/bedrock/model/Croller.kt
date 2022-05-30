@@ -211,7 +211,7 @@ class Croller() {
                     }
                 //    Log.d("ProductNum",productNumber)
 
-                    product_price_list.add(Store("https:"+imgSrc,price.text(),link,"https:"+productImg))
+                    product_price_list.add(Store("https:"+imgSrc,price.text(),link,if (productImg?.contains("http") == true) productImg else "https://$productImg"))
 
                 }
                 temp.priceList=product_price_list

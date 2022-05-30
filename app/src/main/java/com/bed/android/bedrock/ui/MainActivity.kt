@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.model.Croller
 import com.bed.android.bedrock.model.Product
+import com.bed.android.bedrock.model.Store
 import com.bed.android.bedrock.ui.product.ProductDetailFragment
+import com.bed.android.bedrock.ui.recognize.RecognizeFragment
 import com.bed.android.bedrock.ui.search.SearchBarFragment
 import com.bed.android.bedrock.ui.search.SearchResultFragment
 import com.bed.android.bedrock.ui.search.result.TabPriceList
@@ -18,7 +20,6 @@ class MainActivity : AppCompatActivity(),
     lateinit var searchFragment: SearchResultFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_BedRock)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(),
             supportFragmentManager
                 .beginTransaction()
                 .add(R.id.fragment_container, MainFragment.newInstance())
+//                .add(R.id.fragment_container, RecognizeFragment.newInstance())
                 .commit()
         }
 
@@ -63,6 +65,15 @@ class MainActivity : AppCompatActivity(),
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun goToOCR(store: Store) {
+        val fragment = RecognizeFragment.newInstance(store)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
     }
 
     companion object {
