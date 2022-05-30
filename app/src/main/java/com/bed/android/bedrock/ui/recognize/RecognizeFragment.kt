@@ -1,16 +1,16 @@
-package com.bed.android.bedrock.ui
+package com.bed.android.bedrock.ui.recognize
 
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.graphics.drawable.toBitmap
+import androidx.fragment.app.viewModels
 import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentRecognizeBinding
 import com.bed.android.bedrock.kakaovision.TextRecognizeUtil
-import com.bed.android.bedrock.kakaovision.OCRResponse
-import com.bed.android.bedrock.kakaovision.RetrofitInstance
+import com.bed.android.bedrock.model.Store
+import com.bed.android.bedrock.ui.BaseFragment
 import com.bed.android.bedrock.util.BitmapUtil
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -19,19 +19,12 @@ import com.bumptech.glide.request.target.Target
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.ByteArrayOutputStream
 import kotlin.math.min
 
 class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragment_recognize) {
 
-    private lateinit var dataPath:String
+    private lateinit var dataPath: String
+    private val viewModel by viewModels<RecognizeViewModel>()
     private val url = "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/pd/v2/9/1/0/9/4/4/yWkGI/3468910944_B.jpg"
     private val requestListener = object : RequestListener<Drawable> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -42,7 +35,7 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
             resource?.let {
                 binding.imageRecognize.setImageDrawable(it)
-                TextRecognizeUtil.getTextFromBitmapByRecognizer(it.toBitmap(), ::callback)
+//                TextRecognizeUtil.getTextFromBitmapByRecognizer(it.toBitmap(), ::callback)
             }
 
             return true
@@ -52,7 +45,14 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dataPath = context?.filesDir?.absolutePath + "/tesseract/"
-        loadImageFromUrl()
+
+        arguments?.apply {
+            val store = getParcelable(STORE) as? Store ?: return@apply
+
+            viewModel.loadImageFromUrl(store) {
+                callback(store, it)
+            }
+        }
     }
 
     private fun loadImageFromUrl() {
@@ -62,18 +62,18 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
             bitmap?.let {
                 // Kakao OCR
                 val sendPart = TextRecognizeUtil.createFormDataFromBitmap(it)
-                val ocrResult = TextRecognizeUtil.getTextFromOCR(sendPart, ::callback)
-                Log.d(TAG, "loadImageFromUrl: $ocrResult")
+//                val ocrResult = TextRecognizeUtil.getTextFromOCR(sendPart, ::callback)
+//                Log.d(TAG, "loadImageFromUrl: $ocrResult")
             }
         }
     }
 
 
-
-    private fun callback(list: List<String>) {
+    private fun callback(store: Store, list: List<String>) {
         Log.d(TAG, list.toString())
 
-        val target = 1520160.0 // 크롤링해서 정가 가져왔다고 가정
+//        val target = 1520160.0 // 크롤링해서 정가 가져왔다고 가정
+        val target = store.price.replace(",", "").toDouble()
         val target_short = (target / 10000).toInt() // 만 단위로 나누기
         var p_val = target
 
@@ -92,11 +92,11 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
             it.replace("[^\\d]".toRegex(), "")
         }.filter {
             it.isNotBlank() // 공백 지우기
-            it.length in ts_len-1..t_len
+            it.length in ts_len - 1..t_len
         }.toMutableList()
         Log.d(TAG, "price filtered : $filtered")
 
-        if (filtered.isEmpty()){
+        if (filtered.isEmpty()) {
             // 퍼센티지 판단
             var p_filtered = list.filter {
                 it.contains("%")
@@ -112,7 +112,7 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
                 -it.toInt()
             }
             Log.d(TAG, "percentage filtered : $p_filtered")
-            if (p_filtered.isNotEmpty()){
+            if (p_filtered.isNotEmpty()) {
                 p_val *= ((100.0 - p_filtered[0].toDouble()) / 100) // 쿠폰의 퍼센티지가 온전하게 할인되지 않는 경우도 있어서 고려 필요
             }
         }
@@ -124,12 +124,11 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
         val ts_limit = ts_val * 0.7
         Log.d(TAG, "limits : $t_limit, $ts_limit")
         filtered.forEach {
-            if (it.length in ts_len-1..ts_len) {
+            if (it.length in ts_len - 1..ts_len) {
                 if (it.toInt() >= ts_limit) {
                     ts_val = min(ts_val, it.toInt())
                 }
-            }
-            else if (it.length in t_len-1..t_len) {
+            } else if (it.length in t_len - 1..t_len) {
                 if (it.toInt() >= t_limit) {
                     t_val = min(t_val, it.toDouble())
                 }
@@ -144,16 +143,21 @@ class RecognizeFragment : BaseFragment<FragmentRecognizeBinding>(R.layout.fragme
         }
 
         Log.d(TAG, "target : $t_val // shortcut : $ts_val // percent : $p_val")
-        CoroutineScope(Dispatchers.Main).launch{
+        CoroutineScope(Dispatchers.Main).launch {
             binding.textRecognize.text = list.joinToString(" ") + "\n***추출된 최저가 : ${min_val}원***"
         }
     }
 
     companion object {
 
+        private const val STORE = "STORE"
         private const val TAG = "RecognizeFragment"
 
-        fun newInstance() = RecognizeFragment()
+        fun newInstance(store: Store) = RecognizeFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(STORE, store)
+            }
+        }
 
     }
 }

@@ -17,12 +17,13 @@ class TabPriceList : BaseFragment<FragmentDetailtabPricelistBinding>(R.layout.fr
 
     private val viewModel by activityViewModels<ProductDetailViewModel>()
     private var callbacks: Callbacks? = null
-    private val adapter = StoreAdapter(diffUtil) { store ->
+    private val adapter = StoreAdapter(diffUtil, ::buttonClick) { store ->
         callbacks?.onPriceSelected(store.storeLink)
     }
 
     interface Callbacks {
         fun onPriceSelected(storeUrl: String)
+        fun goToOCR(store: Store)
     }
 
     override fun onAttach(context: Context) {
@@ -40,6 +41,10 @@ class TabPriceList : BaseFragment<FragmentDetailtabPricelistBinding>(R.layout.fr
 
         binding.viewModel = viewModel
 
+    }
+
+    private fun buttonClick(item: Store) {
+        callbacks?.goToOCR(item)
     }
 
 
