@@ -105,28 +105,33 @@ class Croller() {
 
     fun croll_detail(product: Product): Product {
         val temp = product.copy()
+        temp.img= arrayListOf()
         var shopList= arrayListOf<String>("쿠팡","11번가","옥션","G마켓","인터파크")
         var shopLinkList= arrayListOf<String>("http://www.coupang.com/vp/products")
         try {
             var doc = Jsoup.connect(temp.product_link).get()
 
-            var thumbnail=doc.select(".summary_left")
-                .select(".photo_w")
-                .select("a")
-                .select("img")
-                .attr("src")
-            temp.img.add("https:"+thumbnail.toString())
+
 
             var imgList=doc.select(".summary_left")
                 .select(".thumb_w")
                 .select(".thumb_slide")
+                .select("li")
 
+
+            var imgTemp:String
             for(e in imgList){
-                temp.img.add("https:"+e.select("li").select("a")
+                Log.d(TAG,"sss"+e.toString())
+                imgTemp= e
+                    .select("a")
                     .select("img")
-                    .attr("src"))
+                    .attr("src").toString()
+
+                imgTemp=imgTemp.replace("53:53","330:330")
+
+                temp.img.add("https:"+imgTemp)
             }
-            Log.d(TAG,temp.img.toString())
+            //Log.d(TAG,temp.img.toString())
 
             var productInfo = doc.select(".lowest_list").select(".high_list tr")
 
