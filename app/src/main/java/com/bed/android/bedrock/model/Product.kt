@@ -6,10 +6,10 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Product(
     var id: String = "",
-    var img: String = "",
+    var img: ArrayList<String>,
     var des: String = "",
     var name: String = "",
-    var priceList: List<Store>,
+    var priceList: ArrayList<Store>,
     var product_link: String = "",
     var lowestPrice: String
 ) : Parcelable

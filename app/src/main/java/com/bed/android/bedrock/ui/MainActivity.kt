@@ -15,6 +15,8 @@ class MainActivity : AppCompatActivity(),
     SearchResultFragment.Callbacks,
     TabPriceList.Callbacks {
 
+    lateinit var searchFragment: SearchResultFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_BedRock)
         super.onCreate(savedInstanceState)
@@ -34,19 +36,22 @@ class MainActivity : AppCompatActivity(),
     override fun onSearchBtnClicked(searchText: String) {
 
         val fragment = SearchResultFragment.newInstance(searchText)
+        searchFragment=fragment
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null)
+            .addToBackStack("search")
             .commit()
     }
 
 
     override fun onProductSelected(product: Product) {
         val fragment = ProductDetailFragment.newInstance(product)
+
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container, fragment)
+            .hide(searchFragment)
+            .add(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
     }

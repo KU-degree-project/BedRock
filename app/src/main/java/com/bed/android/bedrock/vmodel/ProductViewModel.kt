@@ -7,7 +7,7 @@ import com.bed.android.bedrock.model.Store
 
 class ProductViewModel: ViewModel() {
 
-    val img: MutableLiveData<String?> = MutableLiveData()
+    val img: MutableLiveData<List<String?>> = MutableLiveData()
     val lowestPrice: MutableLiveData<String?> = MutableLiveData()
     val productName:MutableLiveData<String?> = MutableLiveData()
     val productDescription:MutableLiveData<String?> = MutableLiveData()

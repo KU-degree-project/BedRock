@@ -34,8 +34,10 @@
         <entry key="..\:/project/graduate/BedRock/app/src/main/res/layout/fragment_search_result.xml" value="0.1125" />
         <entry key="..\:/project/graduate/BedRock/app/src/main/res/layout/fragment_webview.xml" value="0.1125" />
         <entry key="..\:/project/graduate/BedRock/app/src/main/res/layout/list_item_price.xml" value="0.264" />
-        <entry key="..\:/project/graduate/BedRock/app/src/main/res/layout/list_item_product.xml" value="0.1125" />
+        <entry key="..\:/project/graduate/BedRock/app/src/main/res/layout/list_item_product.xml" value="0.16799999999999998" />
+        <entry key="..\:/project/graduate/BedRock/app/src/main/res/layout/overlay.xml" value="0.1" />
         <entry key="..\:/project/graduate/BedRock/app/src/main/res/layout/recent_search_row.xml" value="0.1125" />
+        <entry key="..\:/project/graduate/BedRock/app/src/main/res/layout/stack_item_productimage.xml" value="0.10520833333333333" />
       </map>
     </option>
   </component>

@@ -13,6 +13,7 @@ import com.bed.android.bedrock.R
 import com.bed.android.bedrock.databinding.FragmentProductDetailBinding
 import com.bed.android.bedrock.model.Product
 import com.bed.android.bedrock.ui.BaseFragment
+import com.bed.android.bedrock.ui.adapter.CardStackAdapter
 import com.bed.android.bedrock.ui.search.result.TabDescription
 import com.bed.android.bedrock.ui.search.result.TabPriceList
 import com.google.android.material.tabs.TabLayout
@@ -22,6 +23,10 @@ import kotlinx.coroutines.launch
 class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(R.layout.fragment_product_detail) {
 
     private val viewModel by activityViewModels<ProductDetailViewModel>()
+
+    private lateinit var adapter:CardStackAdapter
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,10 +54,11 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(R.layou
         val pagerAdapter = PagerAdapter(requireActivity())
         pagerAdapter.addFragment(TabDescription.newInstance(product))
         pagerAdapter.addFragment(TabPriceList.newInstance(product))
-
+        adapter= CardStackAdapter(product.img)
         bind {
-            productImage.isVisible = true
+            stackView.adapter=adapter
             textTitle.isVisible = true
+            stackView.isVisible=true
 
             sflSample.apply {
                 stopShimmer()

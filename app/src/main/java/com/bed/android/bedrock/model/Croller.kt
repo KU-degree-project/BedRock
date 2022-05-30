@@ -27,14 +27,14 @@ class Croller() {
             val url_basic = url_front + url + url_back
             var doc = Jsoup.connect(url_basic).get()
             var productList = doc.select(".product_list").select(".prod_item")
-            Log.d(TAG,productList.toString())
+         //   Log.d(TAG,productList.toString())
             if (productList.isEmpty()) {
                 Log.d(TAG, "null")
                 return ArrayList<Product>()
             } else {
                 val productlist_tmp = arrayListOf<Product>()
                 for (e in productList) {
-                    var product: Product = Product("", "", "", "", arrayListOf(), "", "")
+                    var product: Product = Product("", arrayListOf(), "", "", arrayListOf(), "", "")
 
 
                     val id = e.attr("id")
@@ -75,19 +75,20 @@ class Croller() {
 
 
                     product.lowestPrice = lowestPrice.text().toString()
-                    product.img = if (imgSrc.length > 0) {
+                    imgSrc = if (imgSrc.length > 0) {
                         "https:" + imgSrc.toString()
                     } else {
                         ""
                     }
+                    product.img.add(imgSrc)
                     product.name = productName.text().toString()
                     product.id = id.toString()
                     product.des = desc.text().toString()
                     product.product_link = productLink.toString()
 
-                    Log.d(TAG, "product-des" + productLink.toString())
+                   // Log.d(TAG, "product-des" + productLink.toString())
 
-
+                    //Log.d(TAG,"lowest"+lowestPrice.toString())
                     productlist_tmp.add(product)
 
 
@@ -114,6 +115,18 @@ class Croller() {
                 .select("a")
                 .select("img")
                 .attr("src")
+            temp.img.add("https:"+thumbnail.toString())
+
+            var imgList=doc.select(".summary_left")
+                .select(".thumb_w")
+                .select(".thumb_slide")
+
+            for(e in imgList){
+                temp.img.add("https:"+e.select("li").select("a")
+                    .select("img")
+                    .attr("src"))
+            }
+            Log.d(TAG,temp.img.toString())
 
             var productInfo = doc.select(".lowest_list").select(".high_list tr")
 
@@ -191,12 +204,11 @@ class Croller() {
 
                         }
                     }
-                    Log.d("ProductNum",productNumber)
+                //    Log.d("ProductNum",productNumber)
 
                     product_price_list.add(Store("https:"+imgSrc,price.text(),link,"https:"+productImg))
 
                 }
-                temp.img="https:"+thumbnail.toString()
                 temp.priceList=product_price_list
 
             }
@@ -227,7 +239,7 @@ class Croller() {
                 }
                 keywordList.add(new_keyword)
             }
-            Log.d(TAG, keywordList.toString())
+          //  Log.d(TAG, keywordList.toString())
         } catch (e: IOException) {
             e.printStackTrace()
         }
