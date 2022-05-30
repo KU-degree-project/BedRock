@@ -1,5 +1,6 @@
 package com.bed.android.bedrock.ui.adapter
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -64,6 +65,7 @@ class StoreViewHolder(private val binding: ListItemPriceBinding) : RecyclerView.
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun callback(store: Store, list: List<String>) {
 
 //        val target = 1520160.0 // 크롤링해서 정가 가져왔다고 가정
@@ -78,7 +80,7 @@ class StoreViewHolder(private val binding: ListItemPriceBinding) : RecyclerView.
 
         val a = list.filter {
             val trimmed = it.trim()
-            trimmed.contains("\\d[만원]\$".toRegex()) || trimmed.contains("\\d")
+            trimmed.contains("\\d[만원]+\$".toRegex()) || trimmed.contains("\\d")
         }
 
         var filtered = mutableListOf<String>()
@@ -97,6 +99,7 @@ class StoreViewHolder(private val binding: ListItemPriceBinding) : RecyclerView.
             var p_filtered = list.filter {
                 it.contains("%")
             }
+            Log.d(TAG, "callback: $p_filtered")
             p_filtered = p_filtered.map {
                 it.replace("[^\\d]".toRegex(), "") // 숫자 이외의 문자 다 지우기
             }
@@ -133,12 +136,12 @@ class StoreViewHolder(private val binding: ListItemPriceBinding) : RecyclerView.
         ts_val *= 10000
 
         // 계산한 퍼센티지 가격, 추출된 가격 비교
-        var min_val = min(ts_val, t_val.toInt())
+        var min_val = minOf(ts_val, t_val.toInt(), p_val.toInt())
         if (min_val * 0.95 >= p_val) { // 퍼센티지만 주어진 경우 or 쿠폰 한도 걸려있는 경우
             min_val = p_val.toInt()
         }
 
-//        Log.d(RecognizeFragment.TAG, "target : $t_val // shortcut : $ts_val // percent : $p_val")
+        Log.d(TAG, "target : $t_val // shortcut : $ts_val // percent : $p_val")
         CoroutineScope(Dispatchers.Main).launch {
 //            binding.textRecognize.text = list.joinToString(" ") + "\n***추출된 최저가 : ${min_val}원***"
             binding.buttonOcr.apply {
@@ -147,7 +150,8 @@ class StoreViewHolder(private val binding: ListItemPriceBinding) : RecyclerView.
             }
             binding.bedrockPrice.apply {
                 isVisible = true
-                text = "${min_val}원"
+
+                text = "약 ${min_val / 10000}만원"
             }
         }
     }
