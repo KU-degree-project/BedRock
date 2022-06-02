@@ -27,7 +27,7 @@ class Croller() {
             val url_basic = url_front + url + url_back
             var doc = Jsoup.connect(url_basic).get()
             var productList = doc.select(".product_list").select(".prod_item")
-         //   Log.d(TAG,productList.toString())
+            //   Log.d(TAG,productList.toString())
             if (productList.isEmpty()) {
                 Log.d(TAG, "null")
                 return ArrayList<Product>()
@@ -86,7 +86,7 @@ class Croller() {
                     product.des = desc.text().toString()
                     product.product_link = productLink.toString()
 
-                   // Log.d(TAG, "product-des" + productLink.toString())
+                    // Log.d(TAG, "product-des" + productLink.toString())
 
                     //Log.d(TAG,"lowest"+lowestPrice.toString())
                     productlist_tmp.add(product)
@@ -131,7 +131,6 @@ class Croller() {
 
                 temp.img.add("https:"+imgTemp)
             }
-            //Log.d(TAG,temp.img.toString())
 
             var productInfo = doc.select(".lowest_list").select(".high_list tr")
 
@@ -148,6 +147,7 @@ class Croller() {
                     var link=e.select(".logo_over a").attr("href")
                     var shopDoc:Document
                     var productImg:String?=""
+                    var title:String="title"
 
                     if(!shopList.contains(shopName))
                         continue
@@ -168,6 +168,13 @@ class Croller() {
                                 .select(".on a")
                                 .select("img")
                                 .attr("src")
+                            title=shopDoc.select(".item-topinfo")
+                                .select(".item-topinfo_headline")
+                                .select(".box__item-title")
+                                .select(".itemtit")
+                                .text()
+
+
 
                         }
                         "11번가"->{
@@ -177,6 +184,10 @@ class Croller() {
                                 .select(".img_full")
                                 .select("img")
                                 .attr("src")
+                            title=shopDoc.select(".l_product_side_info")
+                                .select(".c_product_info_title")
+                                .select("h1")
+                                .text()
 
 
 
@@ -191,27 +202,38 @@ class Croller() {
                                 .select(".on a")
                                 .select("img")
                                 .attr("src")
+                            title=shopDoc.select(".item-topinfo")
+                                .select(".itemtit")
+                                .text()
+
 
 
                         }
                         "인터파크"->{
                             link="https://shopping.interpark.com/product/productInfo.do?prdNo="+productNumber
+                            //shopDoc = Jsoup.connect(link).get()
                             val lastfournumber=
-                                        "/"+productNumber[productNumber.length-4]+
+                                "/"+productNumber[productNumber.length-4]+
                                         "/"+productNumber[productNumber.length-3]+
                                         "/"+productNumber[productNumber.length-2]+
                                         "/"+productNumber[productNumber.length-1]+"/"
 
                             productImg="https://openimage.interpark.com/goods_image_big"+lastfournumber+productNumber+"_l.jpg"
+                            //title=shopDoc.select(".productTopRight")
+                                //   .select("h2")
+                              //  .toString()
+                            // .select(".itemtit")
+                            //.text()
+
+                         //   Log.d("shoptitle",title)
                         }
                         else->{
                             link="www.google.com"
 
                         }
                     }
-                //    Log.d("ProductNum",productNumber)
 
-                    product_price_list.add(Store("https:"+imgSrc,price.text(),link,if (productImg?.contains("http") == true) productImg else "https://$productImg"))
+                    product_price_list.add(Store("https:"+imgSrc,title!!,price.text(),link,"https:"+productImg))
 
                 }
                 temp.priceList=product_price_list
@@ -244,14 +266,13 @@ class Croller() {
                 }
                 keywordList.add(new_keyword)
             }
-          //  Log.d(TAG, keywordList.toString())
+            //  Log.d(TAG, keywordList.toString())
         } catch (e: IOException) {
             e.printStackTrace()
         }
 
         return keywordList.toList()
     }
-
 
 }
 

@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity(),
     TabPriceList.Callbacks {
 
     lateinit var searchFragment: SearchResultFragment
+    lateinit var detailFragment: ProductDetailFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +51,8 @@ class MainActivity : AppCompatActivity(),
     override fun onProductSelected(product: Product) {
         val fragment = ProductDetailFragment.newInstance(product)
 
+        detailFragment=fragment
+
         supportFragmentManager
             .beginTransaction()
             .hide(searchFragment)
@@ -60,9 +63,12 @@ class MainActivity : AppCompatActivity(),
 
     override fun onPriceSelected(storeUrl: String) {
         val fragment = StorePageFragment.newInstance(storeUrl)
+
+
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container, fragment)
+            .hide(detailFragment)
+            .add(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
     }
