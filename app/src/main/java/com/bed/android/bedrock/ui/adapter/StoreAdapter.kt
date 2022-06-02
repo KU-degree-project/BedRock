@@ -81,7 +81,7 @@ class StoreViewHolder(private val binding: ListItemPriceBinding) : RecyclerView.
                 if(e=='만'){
                     break
                 }
-                if('0'<e && e<'9'){
+                if('0'<=e && e<='9'){
                     priceInTitle+=e
                 }
             }
