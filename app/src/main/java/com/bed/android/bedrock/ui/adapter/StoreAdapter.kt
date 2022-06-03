@@ -50,9 +50,10 @@ class StoreViewHolder(private val binding: ListItemPriceBinding) : RecyclerView.
             startShimmer()
             isVisible = true
         }
-
         CoroutineScope(Dispatchers.IO).launch {
             val bitmap = BitmapUtil.getBitmapFromUrl(item.productImg.replace("https:https:", "https:"))
+                ?:BitmapUtil.getBitmapFromUrl(item.productImg.replace("https:http","http"))
+
 
             bitmap?.let {
                 val sendPart = TextRecognizeUtil.createFormDataFromBitmap(it)
@@ -69,7 +70,7 @@ class StoreViewHolder(private val binding: ListItemPriceBinding) : RecyclerView.
     @SuppressLint("SetTextI18n")
     private fun callback(store: Store, list: List<String>) {
         var storeTitle=store.title.split(' ')
-        Log.d("PriceInTitle","testImplement"+storeTitle.toString())
+        Log.d("PriceInTitle",store.storeName+":"+storeTitle.toString())
 
         var priceInTitle:String?=""
         storeTitle=storeTitle.filter{it.contains("만")}

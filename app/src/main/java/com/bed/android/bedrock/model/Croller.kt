@@ -174,7 +174,7 @@ class Croller() {
                                 .select(".itemtit")
                                 .text()
 
-
+                         //   Log.d("Gmarket",produc)
 
                         }
                         "11번가"->{
@@ -233,7 +233,7 @@ class Croller() {
                         }
                     }
 
-                    product_price_list.add(Store("https:"+imgSrc,title!!,price.text(),link,"https:"+productImg))
+                    product_price_list.add(Store(shopName,"https:"+imgSrc,title!!,price.text(),link,"https:"+productImg))
 
                 }
                 temp.priceList=product_price_list

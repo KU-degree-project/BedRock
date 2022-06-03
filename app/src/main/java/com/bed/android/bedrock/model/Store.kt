@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Store(
+    val storeName:String,
     val thumbnail:String,
     val title:String,
     val price:String,
