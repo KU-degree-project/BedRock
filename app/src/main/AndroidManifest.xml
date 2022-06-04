@@ -32,6 +32,8 @@
             android:name=".ui.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
+
+        <activity android:name=".ui.guide.GuideActivity" />
     </application>
 
 </manifest>
